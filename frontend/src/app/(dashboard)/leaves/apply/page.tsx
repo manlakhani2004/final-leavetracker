@@ -1,0 +1,168 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { leaveApplicationService, leaveTypeService } from '@/lib/services';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import toast from 'react-hot-toast';
+
+export default function ApplyLeavePage() {
+  const [leaveTypes, setLeaveTypes] = useState<any[]>([]);
+  const [formData, setFormData] = useState({
+    leaveTypeId: '',
+    fromDate: '',
+    toDate: '',
+    reason: '',
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [totalDays, setTotalDays] = useState(0);
+
+  useEffect(() => {
+    loadLeaveTypes();
+  }, []);
+
+  useEffect(() => {
+    if (formData.fromDate && formData.toDate) {
+      const from = new Date(formData.fromDate);
+      const to = new Date(formData.toDate);
+      if (from <= to) {
+        const days = calculateWorkingDays(from, to);
+        setTotalDays(days);
+      }
+    }
+  }, [formData.fromDate, formData.toDate]);
+
+  const loadLeaveTypes = async () => {
+    try {
+      const types = await leaveTypeService.getLeaveTypes();
+      setLeaveTypes(types);
+      if (types.length > 0) {
+        setFormData(prev => ({ ...prev, leaveTypeId: (types[0] as any)._id || types[0].id || '' }));
+      }
+    } catch (error) {
+      console.error('Failed to load leave types:', error);
+    }
+  };
+
+  const calculateWorkingDays = (from: Date, to: Date): number => {
+    let count = 0;
+    const current = new Date(from);
+    const end = new Date(to);
+
+    while (current <= end) {
+      const day = current.getDay();
+      // Exclude Saturday (6) and Sunday (0)
+      if (day !== 0 && day !== 6) {
+        count++;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+
+    return count || 1;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.leaveTypeId) {
+      toast.error('Please select a leave type');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await leaveApplicationService.applyLeave({
+        ...formData,
+        fromDate: formData.fromDate,
+        toDate: formData.toDate,
+      });
+      toast.success('Leave application submitted successfully!');
+      setFormData({
+        leaveTypeId: (leaveTypes[0] as any)?._id || leaveTypes[0]?.id || '',
+        fromDate: '',
+        toDate: '',
+        reason: '',
+      });
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to apply leave');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Apply for Leave</h1>
+      
+      <div className="max-w-2xl bg-white rounded-lg shadow p-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Select
+            label="Leave Type"
+            name="leaveTypeId"
+            value={formData.leaveTypeId}
+            onChange={handleChange}
+            options={leaveTypes.map(type => ({ 
+              value: (type as any)._id || type.id, 
+              label: `${type.name} (${type.totalDaysAllowed} days)` 
+            }))}
+          />
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input
+              label="From Date"
+              name="fromDate"
+              type="date"
+              value={formData.fromDate}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              label="To Date"
+              name="toDate"
+              type="date"
+              value={formData.toDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {totalDays > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800">
+                <span className="font-semibold">Total working days:</span> {totalDays}
+              </p>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Reason
+            </label>
+            <textarea
+              name="reason"
+              value={formData.reason}
+              onChange={handleChange}
+              required
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              placeholder="Enter reason for leave..."
+            />
+          </div>
+
+          <Button
+            type="submit"
+            isLoading={isLoading}
+            className="w-full"
+          >
+            Submit Application
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
+}
