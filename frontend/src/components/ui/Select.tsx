@@ -7,21 +7,30 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: { value: string | number; label: string }[];
 }
 
-export function Select({ label, error, options, className, ...props }: SelectProps) {
+export function Select({ label, error, options, className, style, ...props }: SelectProps) {
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label 
+          className="block text-sm font-medium mb-1"
+          style={{ color: 'var(--input-label)' }}
+        >
           {label}
         </label>
       )}
       <select
         className={cn(
-          'w-full px-4 py-2.5 text-gray-900 bg-gray-50 border rounded-xl shadow-sm transition-all duration-200 ease-in-out',
-          'focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white',
-          error ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-gray-200 hover:border-gray-300',
+          'w-full px-4 py-2.5 border rounded-xl shadow-sm transition-all duration-200 ease-in-out',
+          'focus:outline-none focus:ring-2',
+          error ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : '',
           className
         )}
+        style={{
+          background: 'var(--input-bg)',
+          borderColor: error ? undefined : 'var(--input-border)',
+          color: 'var(--input-text)',
+          ...style,
+        }}
         {...props}
       >
         {options.map((option) => (

@@ -54,12 +54,23 @@ export function StatCard({
       </div>
       
       <div className="space-y-1">
-        <p className="text-4xl font-black text-slate-900 tracking-tight">
+        <p 
+          className="text-4xl font-black tracking-tight"
+          style={{ color: 'var(--text-primary)' }}
+        >
           {typeof value === 'number' ? value.toLocaleString() : value}
         </p>
-        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{title}</p>
+        <p 
+          className="text-sm font-bold uppercase tracking-widest"
+          style={{ color: 'var(--text-muted)' }}
+        >
+          {title}
+        </p>
         {subtitle && (
-          <p className="text-xs font-semibold text-slate-500 pt-2 flex items-center gap-2">
+          <p 
+            className="text-xs font-semibold pt-2 flex items-center gap-2"
+            style={{ color: 'var(--text-secondary)' }}
+          >
             <span className={cn("h-1.5 w-1.5 rounded-full", styles.accent || 'bg-slate-300')} />
             {subtitle}
           </p>
@@ -88,8 +99,11 @@ export function QuickActionCard({
 }: QuickActionCardProps) {
   return (
     <Link href={href} className="group">
-      <div className="modern-card p-5 h-full relative overflow-hidden group-hover:border-indigo-200 transition-all duration-500">
-        <div className="absolute -right-6 -top-6 h-24 w-24 bg-slate-50 rounded-full group-hover:bg-indigo-50/50 transition-colors" />
+      <div className="modern-card p-5 h-full relative overflow-hidden transition-all duration-500">
+        <div 
+          className="absolute -right-6 -top-6 h-24 w-24 rounded-full transition-colors"
+          style={{ background: 'var(--surface-secondary)' }}
+        />
         
         {badge !== undefined && badge > 0 && (
           <div className="absolute top-4 right-4 bg-rose-500 text-white text-[10px] font-black rounded-lg px-2 py-1 shadow-lg shadow-rose-200 animate-bounce">
@@ -99,8 +113,18 @@ export function QuickActionCard({
 
         <div className="relative">
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-500 origin-left inline-block">{icon}</div>
-          <h3 className="font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition-colors">{title}</h3>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider leading-relaxed">{description}</p>
+          <h3 
+            className="font-black leading-tight mb-1 transition-colors"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            {title}
+          </h3>
+          <p 
+            className="text-xs font-bold uppercase tracking-wider leading-relaxed"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            {description}
+          </p>
         </div>
       </div>
     </Link>
@@ -109,7 +133,11 @@ export function QuickActionCard({
 
 export function ActivityItem({ icon, title, description, time, color }: any) {
   return (
-    <div className="flex items-start gap-5 p-5 rounded-2xl hover:bg-slate-50 transition-all duration-300 group">
+    <div className="flex items-start gap-5 p-5 rounded-2xl transition-all duration-300 group"
+      style={{ }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-hover)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+    >
       <div className={cn(
         "h-12 w-12 rounded-2xl flex items-center justify-center text-xl flex-shrink-0 transition-all group-hover:scale-110",
         color
@@ -117,9 +145,24 @@ export function ActivityItem({ icon, title, description, time, color }: any) {
         {icon}
       </div>
       <div className="flex-1 min-w-0 pt-0.5">
-        <p className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{title}</p>
-        <p className="text-xs font-semibold text-slate-500 mt-1 leading-relaxed line-clamp-2">{description}</p>
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 mt-3">{time}</p>
+        <p 
+          className="text-sm font-bold transition-colors"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          {title}
+        </p>
+        <p 
+          className="text-xs font-semibold mt-1 leading-relaxed line-clamp-2"
+          style={{ color: 'var(--text-secondary)' }}
+        >
+          {description}
+        </p>
+        <p 
+          className="text-[10px] font-black uppercase tracking-widest mt-3"
+          style={{ color: 'var(--text-muted)' }}
+        >
+          {time}
+        </p>
       </div>
     </div>
   );

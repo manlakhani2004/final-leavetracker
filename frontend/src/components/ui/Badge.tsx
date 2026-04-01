@@ -6,9 +6,10 @@ interface BadgeProps {
   variant?: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'default';
   size?: 'sm' | 'md';
   className?: string;
+  style?: React.CSSProperties;
 }
 
-export function Badge({ children, variant = 'default', size = 'md', className }: BadgeProps) {
+export function Badge({ children, variant = 'default', size = 'md', className, style }: BadgeProps) {
   const variantStyles = {
     pending: 'bg-amber-50 text-amber-600 border-amber-200/50',
     approved: 'bg-emerald-50 text-emerald-600 border-emerald-200/50',
@@ -30,6 +31,7 @@ export function Badge({ children, variant = 'default', size = 'md', className }:
         sizeStyles[size],
         className
       )}
+      style={style}
     >
       {children}
     </span>

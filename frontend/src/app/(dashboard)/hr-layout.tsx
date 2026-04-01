@@ -17,7 +17,7 @@ export default function HRLayout({ children }: { children: React.ReactNode }) {
           <div className="fixed inset-0 flex z-40">
             <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setSidebarOpen(false)}></div>
             <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-xl border-r border-pink-200">
-              <Sidebar role="hr_manager" />
+              <Sidebar theme="hr" />
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@ export default function HRLayout({ children }: { children: React.ReactNode }) {
                 </h1>
               </div>
               <div className="flex-1 flex flex-col overflow-y-auto p-4">
-                <Sidebar role="hr_manager" />
+                <Sidebar theme="hr" />
               </div>
             </div>
           </div>

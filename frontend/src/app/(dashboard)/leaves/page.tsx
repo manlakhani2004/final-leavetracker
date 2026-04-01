@@ -95,25 +95,25 @@ export default function LeavesPage() {
       {/* Balance Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
-          icon="📅"
+          icon={<span className="text-2xl">📅</span>}
           title="Total Allocated"
           value={summary?.balances?.totalAllocated || 0}
           subtitle="Annual allowance"
-          color="bg-gradient-to-br from-indigo-500 to-purple-600"
+          color="indigo"
         />
         <StatCard
-          icon="✈️"
+          icon={<span className="text-2xl">✈️</span>}
           title="Leaves Taken"
           value={summary?.balances?.totalUsed || 0}
           subtitle="Approved days"
-          color="bg-gradient-to-br from-orange-500 to-red-600"
+          color="rose"
         />
         <StatCard
-          icon="🎯"
+          icon={<span className="text-2xl">🎯</span>}
           title="Remaining"
           value={summary?.balances?.totalRemaining || 0}
           subtitle="Available to use"
-          color="bg-gradient-to-br from-emerald-500 to-teal-600"
+          color="emerald"
         />
       </div>
 

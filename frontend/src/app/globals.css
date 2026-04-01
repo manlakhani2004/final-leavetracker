@@ -2,17 +2,675 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   THEME SYSTEM — CSS Custom Properties
+   All UI components read from these variables.
+   Each theme-* class overrides them on :root.
+   ============================================================ */
+
 :root {
+  /* ——— Surface / Background ——— */
   --background: #f8fafc;
   --foreground: #0f172a;
+  --surface: #ffffff;
+  --surface-hover: #f8fafc;
+  --surface-secondary: #f1f5f9;
+
+  /* ——— Primary Palette ——— */
   --primary: #6366f1;
   --primary-hover: #4f46e5;
+  --primary-light: #eef2ff;
+  --primary-lighter: #e0e7ff;
+  --primary-text: #4f46e5;
+  --primary-shadow: rgba(79, 70, 229, 0.5);
+  --primary-gradient-from: #6366f1;
+  --primary-gradient-to: #8b5cf6;
+
+  /* ——— Sidebar ——— */
   --sidebar: #ffffff;
   --sidebar-foreground: #64748b;
   --sidebar-active: #4f46e5;
-  --sidebar-active-bg: #f5f3ff;
+  --sidebar-active-bg: #eef2ff;
+  --sidebar-active-text: #ffffff;
+  --sidebar-hover-bg: #f5f3ff;
+  --sidebar-hover-text: #4f46e5;
+
+  /* ——— Topbar ——— */
+  --topbar-bg: rgba(255, 255, 255, 0.7);
+  --topbar-border: rgba(226, 232, 240, 0.5);
+  --topbar-text: #334155;
+  --topbar-search-bg: rgba(241, 245, 249, 0.5);
+  --topbar-search-border: rgba(226, 232, 240, 0.5);
+
+  /* ——— Cards ——— */
+  --card-bg: #ffffff;
+  --card-border: rgba(226, 232, 240, 0.5);
+  --card-shadow: rgba(0, 0, 0, 0.04);
+  --card-shadow-hover: rgba(0, 0, 0, 0.08);
+
+  /* ——— Inputs & Forms ——— */
+  --input-bg: #f9fafb;
+  --input-border: #e5e7eb;
+  --input-border-hover: #d1d5db;
+  --input-text: #111827;
+  --input-placeholder: #9ca3af;
+  --input-focus-ring: rgba(99, 102, 241, 0.5);
+  --input-focus-border: #6366f1;
+  --input-label: #374151;
+
+  /* ——— Modal ——— */
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(15, 23, 42, 0.4);
+  --modal-header-bg: rgba(249, 250, 251, 0.5);
+  --modal-border: #f3f4f6;
+  --modal-title: #111827;
+
+  /* ——— Table ——— */
+  --table-header-bg: #f9fafb;
+  --table-body-bg: #ffffff;
+  --table-border: #e5e7eb;
+  --table-text: #111827;
+  --table-header-text: #374151;
+
+  /* ——— Text ——— */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverted: #ffffff;
+
+  /* ——— Borders ——— */
+  --border: #e2e8f0;
+  --border-light: rgba(226, 232, 240, 0.5);
+
+  /* ——— Glassmorphism ——— */
   --glass: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+
+  /* ——— Scrollbar ——— */
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+
+  /* ——— Focus Ring ——— */
+  --focus-ring: rgba(99, 102, 241, 0.4);
+
+  /* ——— Switch ——— */
+  --switch-active: #6366f1;
+  --switch-inactive: #e5e7eb;
+
+  /* ——— Status indicator ——— */
+  --status-dot: #6366f1;
+
+  /* ——— Profile avatar gradient ——— */
+  --avatar-from: #6366f1;
+  --avatar-to: #8b5cf6;
+  --avatar-shadow: rgba(99, 102, 241, 0.3);
 }
+
+/* =========================
+   OCEAN BLUE THEME
+   ========================= */
+.theme-ocean {
+  --background: #f0f9ff;
+  --foreground: #0c4a6e;
+  --surface: #ffffff;
+  --surface-hover: #f0f9ff;
+  --surface-secondary: #e0f2fe;
+
+  --primary: #0ea5e9;
+  --primary-hover: #0284c7;
+  --primary-light: #e0f2fe;
+  --primary-lighter: #bae6fd;
+  --primary-text: #0369a1;
+  --primary-shadow: rgba(14, 165, 233, 0.5);
+  --primary-gradient-from: #0ea5e9;
+  --primary-gradient-to: #06b6d4;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #64748b;
+  --sidebar-active: #0284c7;
+  --sidebar-active-bg: #e0f2fe;
+  --sidebar-active-text: #ffffff;
+  --sidebar-hover-bg: #f0f9ff;
+  --sidebar-hover-text: #0284c7;
+
+  --topbar-bg: rgba(255, 255, 255, 0.7);
+  --topbar-border: rgba(186, 230, 253, 0.5);
+  --topbar-text: #0c4a6e;
+  --topbar-search-bg: rgba(224, 242, 254, 0.5);
+  --topbar-search-border: rgba(186, 230, 253, 0.5);
+
+  --card-bg: #ffffff;
+  --card-border: rgba(186, 230, 253, 0.5);
+  --card-shadow: rgba(14, 165, 233, 0.04);
+  --card-shadow-hover: rgba(14, 165, 233, 0.1);
+
+  --input-bg: #f0f9ff;
+  --input-border: #bae6fd;
+  --input-border-hover: #7dd3fc;
+  --input-text: #0c4a6e;
+  --input-placeholder: #7dd3fc;
+  --input-focus-ring: rgba(14, 165, 233, 0.5);
+  --input-focus-border: #0ea5e9;
+  --input-label: #0369a1;
+
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(12, 74, 110, 0.4);
+  --modal-header-bg: rgba(224, 242, 254, 0.5);
+  --modal-border: #e0f2fe;
+  --modal-title: #0c4a6e;
+
+  --table-header-bg: #f0f9ff;
+  --table-body-bg: #ffffff;
+  --table-border: #bae6fd;
+  --table-text: #0c4a6e;
+  --table-header-text: #0369a1;
+
+  --text-primary: #0c4a6e;
+  --text-secondary: #0369a1;
+  --text-muted: #7dd3fc;
+
+  --border: #bae6fd;
+  --border-light: rgba(186, 230, 253, 0.5);
+  --glass: rgba(224, 242, 254, 0.7);
+  --glass-border: rgba(186, 230, 253, 0.3);
+
+  --scrollbar-thumb: #7dd3fc;
+  --scrollbar-thumb-hover: #38bdf8;
+  --focus-ring: rgba(14, 165, 233, 0.4);
+  --switch-active: #0ea5e9;
+  --switch-inactive: #bae6fd;
+  --status-dot: #0ea5e9;
+
+  --avatar-from: #0ea5e9;
+  --avatar-to: #06b6d4;
+  --avatar-shadow: rgba(14, 165, 233, 0.3);
+}
+
+/* =========================
+   FOREST GREEN THEME
+   ========================= */
+.theme-forest {
+  --background: #f0fdf4;
+  --foreground: #14532d;
+  --surface: #ffffff;
+  --surface-hover: #f0fdf4;
+  --surface-secondary: #dcfce7;
+
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --primary-light: #dcfce7;
+  --primary-lighter: #bbf7d0;
+  --primary-text: #047857;
+  --primary-shadow: rgba(16, 185, 129, 0.5);
+  --primary-gradient-from: #10b981;
+  --primary-gradient-to: #059669;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #64748b;
+  --sidebar-active: #059669;
+  --sidebar-active-bg: #dcfce7;
+  --sidebar-active-text: #ffffff;
+  --sidebar-hover-bg: #f0fdf4;
+  --sidebar-hover-text: #059669;
+
+  --topbar-bg: rgba(255, 255, 255, 0.7);
+  --topbar-border: rgba(187, 247, 208, 0.5);
+  --topbar-text: #14532d;
+  --topbar-search-bg: rgba(220, 252, 231, 0.5);
+  --topbar-search-border: rgba(187, 247, 208, 0.5);
+
+  --card-bg: #ffffff;
+  --card-border: rgba(187, 247, 208, 0.5);
+  --card-shadow: rgba(16, 185, 129, 0.04);
+  --card-shadow-hover: rgba(16, 185, 129, 0.1);
+
+  --input-bg: #f0fdf4;
+  --input-border: #bbf7d0;
+  --input-border-hover: #86efac;
+  --input-text: #14532d;
+  --input-placeholder: #86efac;
+  --input-focus-ring: rgba(16, 185, 129, 0.5);
+  --input-focus-border: #10b981;
+  --input-label: #047857;
+
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(20, 83, 45, 0.4);
+  --modal-header-bg: rgba(220, 252, 231, 0.5);
+  --modal-border: #dcfce7;
+  --modal-title: #14532d;
+
+  --table-header-bg: #f0fdf4;
+  --table-body-bg: #ffffff;
+  --table-border: #bbf7d0;
+  --table-text: #14532d;
+  --table-header-text: #047857;
+
+  --text-primary: #14532d;
+  --text-secondary: #047857;
+  --text-muted: #86efac;
+
+  --border: #bbf7d0;
+  --border-light: rgba(187, 247, 208, 0.5);
+  --glass: rgba(220, 252, 231, 0.7);
+  --glass-border: rgba(187, 247, 208, 0.3);
+
+  --scrollbar-thumb: #86efac;
+  --scrollbar-thumb-hover: #4ade80;
+  --focus-ring: rgba(16, 185, 129, 0.4);
+  --switch-active: #10b981;
+  --switch-inactive: #bbf7d0;
+  --status-dot: #10b981;
+
+  --avatar-from: #10b981;
+  --avatar-to: #059669;
+  --avatar-shadow: rgba(16, 185, 129, 0.3);
+}
+
+/* =========================
+   SUNSET ORANGE THEME
+   ========================= */
+.theme-sunset {
+  --background: #fff7ed;
+  --foreground: #7c2d12;
+  --surface: #ffffff;
+  --surface-hover: #fff7ed;
+  --surface-secondary: #ffedd5;
+
+  --primary: #f97316;
+  --primary-hover: #ea580c;
+  --primary-light: #ffedd5;
+  --primary-lighter: #fed7aa;
+  --primary-text: #c2410c;
+  --primary-shadow: rgba(249, 115, 22, 0.5);
+  --primary-gradient-from: #f97316;
+  --primary-gradient-to: #ef4444;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #64748b;
+  --sidebar-active: #ea580c;
+  --sidebar-active-bg: #ffedd5;
+  --sidebar-active-text: #ffffff;
+  --sidebar-hover-bg: #fff7ed;
+  --sidebar-hover-text: #ea580c;
+
+  --topbar-bg: rgba(255, 255, 255, 0.7);
+  --topbar-border: rgba(254, 215, 170, 0.5);
+  --topbar-text: #7c2d12;
+  --topbar-search-bg: rgba(255, 237, 213, 0.5);
+  --topbar-search-border: rgba(254, 215, 170, 0.5);
+
+  --card-bg: #ffffff;
+  --card-border: rgba(254, 215, 170, 0.5);
+  --card-shadow: rgba(249, 115, 22, 0.04);
+  --card-shadow-hover: rgba(249, 115, 22, 0.1);
+
+  --input-bg: #fff7ed;
+  --input-border: #fed7aa;
+  --input-border-hover: #fdba74;
+  --input-text: #7c2d12;
+  --input-placeholder: #fdba74;
+  --input-focus-ring: rgba(249, 115, 22, 0.5);
+  --input-focus-border: #f97316;
+  --input-label: #c2410c;
+
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(124, 45, 18, 0.4);
+  --modal-header-bg: rgba(255, 237, 213, 0.5);
+  --modal-border: #ffedd5;
+  --modal-title: #7c2d12;
+
+  --table-header-bg: #fff7ed;
+  --table-body-bg: #ffffff;
+  --table-border: #fed7aa;
+  --table-text: #7c2d12;
+  --table-header-text: #c2410c;
+
+  --text-primary: #7c2d12;
+  --text-secondary: #c2410c;
+  --text-muted: #fdba74;
+
+  --border: #fed7aa;
+  --border-light: rgba(254, 215, 170, 0.5);
+  --glass: rgba(255, 237, 213, 0.7);
+  --glass-border: rgba(254, 215, 170, 0.3);
+
+  --scrollbar-thumb: #fdba74;
+  --scrollbar-thumb-hover: #fb923c;
+  --focus-ring: rgba(249, 115, 22, 0.4);
+  --switch-active: #f97316;
+  --switch-inactive: #fed7aa;
+  --status-dot: #f97316;
+
+  --avatar-from: #f97316;
+  --avatar-to: #ef4444;
+  --avatar-shadow: rgba(249, 115, 22, 0.3);
+}
+
+/* =========================
+   ROSE PINK THEME
+   ========================= */
+.theme-rose {
+  --background: #fdf2f8;
+  --foreground: #831843;
+  --surface: #ffffff;
+  --surface-hover: #fdf2f8;
+  --surface-secondary: #fce7f3;
+
+  --primary: #ec4899;
+  --primary-hover: #db2777;
+  --primary-light: #fce7f3;
+  --primary-lighter: #fbcfe8;
+  --primary-text: #be185d;
+  --primary-shadow: rgba(236, 72, 153, 0.5);
+  --primary-gradient-from: #ec4899;
+  --primary-gradient-to: #d946ef;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #64748b;
+  --sidebar-active: #db2777;
+  --sidebar-active-bg: #fce7f3;
+  --sidebar-active-text: #ffffff;
+  --sidebar-hover-bg: #fdf2f8;
+  --sidebar-hover-text: #db2777;
+
+  --topbar-bg: rgba(255, 255, 255, 0.7);
+  --topbar-border: rgba(251, 207, 232, 0.5);
+  --topbar-text: #831843;
+  --topbar-search-bg: rgba(252, 231, 243, 0.5);
+  --topbar-search-border: rgba(251, 207, 232, 0.5);
+
+  --card-bg: #ffffff;
+  --card-border: rgba(251, 207, 232, 0.5);
+  --card-shadow: rgba(236, 72, 153, 0.04);
+  --card-shadow-hover: rgba(236, 72, 153, 0.1);
+
+  --input-bg: #fdf2f8;
+  --input-border: #fbcfe8;
+  --input-border-hover: #f9a8d4;
+  --input-text: #831843;
+  --input-placeholder: #f9a8d4;
+  --input-focus-ring: rgba(236, 72, 153, 0.5);
+  --input-focus-border: #ec4899;
+  --input-label: #be185d;
+
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(131, 24, 67, 0.4);
+  --modal-header-bg: rgba(252, 231, 243, 0.5);
+  --modal-border: #fce7f3;
+  --modal-title: #831843;
+
+  --table-header-bg: #fdf2f8;
+  --table-body-bg: #ffffff;
+  --table-border: #fbcfe8;
+  --table-text: #831843;
+  --table-header-text: #be185d;
+
+  --text-primary: #831843;
+  --text-secondary: #be185d;
+  --text-muted: #f9a8d4;
+
+  --border: #fbcfe8;
+  --border-light: rgba(251, 207, 232, 0.5);
+  --glass: rgba(252, 231, 243, 0.7);
+  --glass-border: rgba(251, 207, 232, 0.3);
+
+  --scrollbar-thumb: #f9a8d4;
+  --scrollbar-thumb-hover: #f472b6;
+  --focus-ring: rgba(236, 72, 153, 0.4);
+  --switch-active: #ec4899;
+  --switch-inactive: #fbcfe8;
+  --status-dot: #ec4899;
+
+  --avatar-from: #ec4899;
+  --avatar-to: #d946ef;
+  --avatar-shadow: rgba(236, 72, 153, 0.3);
+}
+
+/* =========================
+   LAVENDER THEME
+   ========================= */
+.theme-lavender {
+  --background: #f5f3ff;
+  --foreground: #3b0764;
+  --surface: #ffffff;
+  --surface-hover: #f5f3ff;
+  --surface-secondary: #ede9fe;
+
+  --primary: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --primary-light: #ede9fe;
+  --primary-lighter: #ddd6fe;
+  --primary-text: #6d28d9;
+  --primary-shadow: rgba(139, 92, 246, 0.5);
+  --primary-gradient-from: #8b5cf6;
+  --primary-gradient-to: #7c3aed;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #64748b;
+  --sidebar-active: #7c3aed;
+  --sidebar-active-bg: #ede9fe;
+  --sidebar-active-text: #ffffff;
+  --sidebar-hover-bg: #f5f3ff;
+  --sidebar-hover-text: #7c3aed;
+
+  --topbar-bg: rgba(255, 255, 255, 0.7);
+  --topbar-border: rgba(221, 214, 254, 0.5);
+  --topbar-text: #3b0764;
+  --topbar-search-bg: rgba(237, 233, 254, 0.5);
+  --topbar-search-border: rgba(221, 214, 254, 0.5);
+
+  --card-bg: #ffffff;
+  --card-border: rgba(221, 214, 254, 0.5);
+  --card-shadow: rgba(139, 92, 246, 0.04);
+  --card-shadow-hover: rgba(139, 92, 246, 0.1);
+
+  --input-bg: #f5f3ff;
+  --input-border: #ddd6fe;
+  --input-border-hover: #c4b5fd;
+  --input-text: #3b0764;
+  --input-placeholder: #c4b5fd;
+  --input-focus-ring: rgba(139, 92, 246, 0.5);
+  --input-focus-border: #8b5cf6;
+  --input-label: #6d28d9;
+
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(59, 7, 100, 0.4);
+  --modal-header-bg: rgba(237, 233, 254, 0.5);
+  --modal-border: #ede9fe;
+  --modal-title: #3b0764;
+
+  --table-header-bg: #f5f3ff;
+  --table-body-bg: #ffffff;
+  --table-border: #ddd6fe;
+  --table-text: #3b0764;
+  --table-header-text: #6d28d9;
+
+  --text-primary: #3b0764;
+  --text-secondary: #6d28d9;
+  --text-muted: #c4b5fd;
+
+  --border: #ddd6fe;
+  --border-light: rgba(221, 214, 254, 0.5);
+  --glass: rgba(237, 233, 254, 0.7);
+  --glass-border: rgba(221, 214, 254, 0.3);
+
+  --scrollbar-thumb: #c4b5fd;
+  --scrollbar-thumb-hover: #a78bfa;
+  --focus-ring: rgba(139, 92, 246, 0.4);
+  --switch-active: #8b5cf6;
+  --switch-inactive: #ddd6fe;
+  --status-dot: #8b5cf6;
+
+  --avatar-from: #8b5cf6;
+  --avatar-to: #7c3aed;
+  --avatar-shadow: rgba(139, 92, 246, 0.3);
+}
+
+/* =========================
+   DARK THEME
+   ========================= */
+.theme-dark {
+  --background: #0f172a;
+  --foreground: #e2e8f0;
+  --surface: #1e293b;
+  --surface-hover: #273548;
+  --surface-secondary: #1e293b;
+
+  --primary: #818cf8;
+  --primary-hover: #6366f1;
+  --primary-light: rgba(99, 102, 241, 0.15);
+  --primary-lighter: rgba(99, 102, 241, 0.1);
+  --primary-text: #a5b4fc;
+  --primary-shadow: rgba(99, 102, 241, 0.4);
+  --primary-gradient-from: #818cf8;
+  --primary-gradient-to: #6366f1;
+
+  --sidebar: #1e293b;
+  --sidebar-foreground: #94a3b8;
+  --sidebar-active: #6366f1;
+  --sidebar-active-bg: rgba(99, 102, 241, 0.15);
+  --sidebar-active-text: #ffffff;
+  --sidebar-hover-bg: rgba(99, 102, 241, 0.08);
+  --sidebar-hover-text: #a5b4fc;
+
+  --topbar-bg: rgba(30, 41, 59, 0.8);
+  --topbar-border: rgba(51, 65, 85, 0.5);
+  --topbar-text: #e2e8f0;
+  --topbar-search-bg: rgba(15, 23, 42, 0.5);
+  --topbar-search-border: rgba(51, 65, 85, 0.5);
+
+  --card-bg: #1e293b;
+  --card-border: rgba(51, 65, 85, 0.5);
+  --card-shadow: rgba(0, 0, 0, 0.2);
+  --card-shadow-hover: rgba(0, 0, 0, 0.3);
+
+  --input-bg: #0f172a;
+  --input-border: #334155;
+  --input-border-hover: #475569;
+  --input-text: #e2e8f0;
+  --input-placeholder: #64748b;
+  --input-focus-ring: rgba(99, 102, 241, 0.5);
+  --input-focus-border: #818cf8;
+  --input-label: #cbd5e1;
+
+  --modal-bg: #1e293b;
+  --modal-overlay: rgba(0, 0, 0, 0.6);
+  --modal-header-bg: rgba(15, 23, 42, 0.5);
+  --modal-border: #334155;
+  --modal-title: #e2e8f0;
+
+  --table-header-bg: #0f172a;
+  --table-body-bg: #1e293b;
+  --table-border: #334155;
+  --table-text: #e2e8f0;
+  --table-header-text: #cbd5e1;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+
+  --border: #334155;
+  --border-light: rgba(51, 65, 85, 0.5);
+  --glass: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(51, 65, 85, 0.3);
+
+  --scrollbar-thumb: #475569;
+  --scrollbar-thumb-hover: #64748b;
+  --focus-ring: rgba(99, 102, 241, 0.4);
+  --switch-active: #818cf8;
+  --switch-inactive: #334155;
+  --status-dot: #818cf8;
+
+  --avatar-from: #818cf8;
+  --avatar-to: #6366f1;
+  --avatar-shadow: rgba(99, 102, 241, 0.3);
+}
+
+/* =========================
+   MIDNIGHT THEME
+   ========================= */
+.theme-midnight {
+  --background: #020617;
+  --foreground: #e2e8f0;
+  --surface: #0f172a;
+  --surface-hover: #1e293b;
+  --surface-secondary: #0f172a;
+
+  --primary: #38bdf8;
+  --primary-hover: #0ea5e9;
+  --primary-light: rgba(56, 189, 248, 0.15);
+  --primary-lighter: rgba(56, 189, 248, 0.1);
+  --primary-text: #7dd3fc;
+  --primary-shadow: rgba(56, 189, 248, 0.4);
+  --primary-gradient-from: #38bdf8;
+  --primary-gradient-to: #0ea5e9;
+
+  --sidebar: #0f172a;
+  --sidebar-foreground: #94a3b8;
+  --sidebar-active: #0ea5e9;
+  --sidebar-active-bg: rgba(14, 165, 233, 0.15);
+  --sidebar-active-text: #ffffff;
+  --sidebar-hover-bg: rgba(56, 189, 248, 0.08);
+  --sidebar-hover-text: #7dd3fc;
+
+  --topbar-bg: rgba(15, 23, 42, 0.8);
+  --topbar-border: rgba(30, 41, 59, 0.5);
+  --topbar-text: #e2e8f0;
+  --topbar-search-bg: rgba(2, 6, 23, 0.5);
+  --topbar-search-border: rgba(30, 41, 59, 0.5);
+
+  --card-bg: #0f172a;
+  --card-border: rgba(30, 41, 59, 0.5);
+  --card-shadow: rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: rgba(0, 0, 0, 0.4);
+
+  --input-bg: #020617;
+  --input-border: #1e293b;
+  --input-border-hover: #334155;
+  --input-text: #e2e8f0;
+  --input-placeholder: #475569;
+  --input-focus-ring: rgba(56, 189, 248, 0.5);
+  --input-focus-border: #38bdf8;
+  --input-label: #cbd5e1;
+
+  --modal-bg: #0f172a;
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --modal-header-bg: rgba(2, 6, 23, 0.5);
+  --modal-border: #1e293b;
+  --modal-title: #e2e8f0;
+
+  --table-header-bg: #020617;
+  --table-body-bg: #0f172a;
+  --table-border: #1e293b;
+  --table-text: #e2e8f0;
+  --table-header-text: #cbd5e1;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #475569;
+
+  --border: #1e293b;
+  --border-light: rgba(30, 41, 59, 0.5);
+  --glass: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(30, 41, 59, 0.3);
+
+  --scrollbar-thumb: #334155;
+  --scrollbar-thumb-hover: #475569;
+  --focus-ring: rgba(56, 189, 248, 0.4);
+  --switch-active: #38bdf8;
+  --switch-inactive: #1e293b;
+  --status-dot: #38bdf8;
+
+  --avatar-from: #38bdf8;
+  --avatar-to: #0ea5e9;
+  --avatar-shadow: rgba(56, 189, 248, 0.3);
+}
+
+
+/* ============================================================
+   GLOBAL RESETS & BASE STYLES
+   ============================================================ */
 
 * {
   box-sizing: border-box;
@@ -26,39 +684,56 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* Custom Scrollbar */
+/* ============================================================
+   CUSTOM SCROLLBAR — themed
+   ============================================================ */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--scrollbar-thumb-hover);
 }
 
-/* Glassmorphism Classes */
+/* ============================================================
+   UTILITY CLASSES — all driven by CSS variables
+   ============================================================ */
+
+/* Glassmorphism */
 .glass {
   background: var(--glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
 }
 
-/* Modern Gradient Text */
+/* Modern Gradient Text — uses theme primary */
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-600;
+  background: linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Modern Card Effect */
+/* Modern Card Effect — themed */
 .modern-card {
-  @apply bg-white border border-slate-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 rounded-2xl;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 30px var(--card-shadow);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+.modern-card:hover {
+  box-shadow: 0 8px 30px var(--card-shadow-hover);
 }
 
 /* Hover Scale Effect */
@@ -66,18 +741,45 @@ body {
   @apply transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98];
 }
 
-/* Shimmer Effect for Loading Statest */
+/* Shimmer Effect for Loading States */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 .shimmer {
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background: linear-gradient(90deg, var(--surface-secondary) 25%, var(--border) 50%, var(--surface-secondary) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
 }
 
-/* Sidebar Specific */
+/* Sidebar active link — themed */
 .sidebar-link-active {
-  @apply relative bg-indigo-50 text-indigo-600 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-2/3 before:bg-indigo-600 before:rounded-r-full;
+  position: relative;
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active);
+}
+.sidebar-link-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.25rem;
+  height: 66%;
+  background: var(--sidebar-active);
+  border-radius: 0 9999px 9999px 0;
+}
+
+/* ============================================================
+   THEME TRANSITION — smooth color changes
+   ============================================================ */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+/* Exclude elements that need their own transition timing */
+input, textarea, select, button, a, .transition-all, .transition-transform, .transition-colors, .transition-opacity {
+  transition-property: all;
 }
