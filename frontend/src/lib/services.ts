@@ -44,6 +44,14 @@ export const authService = {
     const response = await api.patch<ApiResponse<any>>('/auth/profile', data);
     return response.data.data;
   },
+  forgotPassword: async (email: string) => {
+    const response = await api.post<ApiResponse<any>>('/auth/forgot-password', { email });
+    return response.data;
+  },
+  resetPassword: async (token: string, newPassword: string) => {
+    const response = await api.post<ApiResponse<any>>('/auth/reset-password', { token, newPassword });
+    return response.data;
+  },
 };
 
 export const userService = {

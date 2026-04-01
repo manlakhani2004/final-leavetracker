@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
@@ -9,6 +9,7 @@ import { Utils } from '../../common/utils';
 import { RegisterOrgDto } from './dto/register-org.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private mailService: MailService,
   ) {}
 
   async registerOrg(registerOrgDto: RegisterOrgDto) {
@@ -193,6 +195,49 @@ export class AuthService {
       email: user.email,
       role: user.role,
     };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new NotFoundException('Email not found');
+    }
+
+    const payload = { sub: user._id, type: 'reset' };
+    const resetToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get('JWT_ACCESS_SECRET'),
+      expiresIn: '15m',
+    });
+
+    const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3001';
+    const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
+    
+    this.mailService
+      .sendMail(resetLink, user.email)
+      .catch((err) => {
+        console.error('Forgot password email failed:', err);
+      });
+
+    return { message: 'Reset link sent Check your email.' };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get('JWT_ACCESS_SECRET'),
+      });
+
+      if (payload.type !== 'reset') {
+        throw new BadRequestException('Invalid token type');
+      }
+
+      const passwordHash = await Utils.hashPassword(newPassword);
+      await this.userModel.findByIdAndUpdate(payload.sub, { passwordHash });
+      
+      return { message: 'Password has been correctly reset.' };
+    } catch (e) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
   }
 
   private async generateTokens(user: User) {

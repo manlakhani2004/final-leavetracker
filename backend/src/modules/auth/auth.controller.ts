@@ -4,6 +4,8 @@ import { RegisterOrgDto } from './dto/register-org.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ApiResponseDto } from '../../common/dto/api-response.dto';
 import { RequestUser } from './types';
@@ -53,5 +55,17 @@ export class AuthController {
   async updateProfile(@RequestUser() user: any, @Body() updateProfileDto: UpdateProfileDto) {
     const result = await this.authService.updateProfile(user.sub, updateProfileDto);
     return new ApiResponseDto(true, 'Profile updated successfully', result);
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() { email }: ForgotPasswordDto) {
+    const result = await this.authService.forgotPassword(email);
+    return new ApiResponseDto(true, result.message, null);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() { token, newPassword }: ResetPasswordDto) {
+    const result = await this.authService.resetPassword(token, newPassword);
+    return new ApiResponseDto(true, result.message, null);
   }
 }
