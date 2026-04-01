@@ -155,7 +155,7 @@ export default function LeavesPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-lg p-6 text-white">
+          <div className="rounded-2xl shadow-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))' }}>
             <h4 className="font-bold mb-2">Need Help?</h4>
             <p className="text-sm opacity-90 mb-4">Check our leave policy or contact HR for any clarifications regarding your balance.</p>
             <Button variant="outline" className="w-full border-white/30 hover:bg-white/10 text-white">

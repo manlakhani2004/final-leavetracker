@@ -244,7 +244,11 @@ export default function DashboardPage() {
                 <h2 className="text-2xl font-black" style={{ color: 'var(--text-primary)' }}>Shortcuts</h2>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                 <Link href="/leaves/apply" className="modern-card p-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white flex items-center justify-between group hover:-translate-y-1 transition-all">
+                 <Link 
+                   href="/leaves/apply" 
+                   className="modern-card p-6 text-white flex items-center justify-between group hover:-translate-y-1 transition-all"
+                   style={{ background: 'linear-gradient(to right, var(--primary-gradient-from), var(--primary-gradient-to))' }}
+                 >
                     <div className="space-y-1">
                       <p className="font-black text-lg">Apply for Leave</p>
                       <p className="text-xs font-bold text-white/70 uppercase tracking-widest">Submit new request</p>

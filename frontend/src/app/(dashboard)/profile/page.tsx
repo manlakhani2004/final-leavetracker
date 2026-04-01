@@ -64,16 +64,16 @@ export default function ProfilePage() {
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[400px]">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--primary)' }}></div>
     </div>
   );
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-gray-100 pb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 pb-6" style={{ borderBottom: '1px solid var(--border)' }}>
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">My Profile</h1>
-          <p className="text-gray-500 mt-1 font-medium">Manage your personal information and account security</p>
+          <h1 className="text-3xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>My Profile</h1>
+          <p className="mt-1 font-medium" style={{ color: 'var(--text-muted)' }}>Manage your personal information and account security</p>
         </div>
         <Badge variant="approved" className="px-4 py-1.5 text-xs font-bold uppercase tracking-widest shadow-sm">
           {user?.role?.replace('_', ' ')}
@@ -83,33 +83,33 @@ export default function ProfilePage() {
       <div className="grid md:grid-cols-3 gap-8">
         {/* Left Column: Avatar and Quick Info */}
         <div className="space-y-6">
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+          <div className="p-8 rounded-3xl shadow-sm border text-center relative overflow-hidden group" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+            <div className="absolute top-0 left-0 w-full h-2" style={{ background: 'linear-gradient(to right, var(--primary-gradient-from), var(--primary-gradient-to))' }}></div>
             <div className="relative inline-block mb-6">
-              <div className="w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center text-white text-5xl font-black shadow-xl transform rotate-3 transition-transform group-hover:rotate-0 duration-300">
+              <div className="w-32 h-32 rounded-3xl flex items-center justify-center text-white text-5xl font-black shadow-xl transform rotate-3 transition-transform group-hover:rotate-0 duration-300" style={{ background: 'linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))' }}>
                 {profileData?.name?.charAt(0)}
               </div>
-              <button className="absolute -bottom-2 -right-2 p-3 bg-white rounded-2xl shadow-lg border border-gray-100 text-indigo-600 hover:scale-110 transition-transform">
+              <button className="absolute -bottom-2 -right-2 p-3 rounded-2xl shadow-lg border hover:scale-110 transition-transform" style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--primary)' }}>
                 <Camera className="w-5 h-5" />
               </button>
             </div>
-            <h3 className="text-xl font-bold text-gray-900">{profileData?.name}</h3>
-            <p className="text-gray-500 font-medium text-sm mt-1">{profileData?.designation || 'Staff Member'}</p>
+            <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{profileData?.name}</h3>
+            <p className="font-medium text-sm mt-1" style={{ color: 'var(--text-muted)' }}>{profileData?.designation || 'Staff Member'}</p>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-4">
-            <div className="flex items-center gap-4 text-gray-600 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
-              <div className="p-2 bg-gray-100 rounded-lg"><Mail className="w-4 h-4" /></div>
+          <div className="p-6 rounded-3xl shadow-sm border space-y-4" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+            <div className="flex items-center gap-4 p-3 rounded-2xl transition-colors" style={{ color: 'var(--text-secondary)' }}>
+              <div className="p-2 rounded-lg" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}><Mail className="w-4 h-4" /></div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Email Address</p>
-                <p className="text-sm font-semibold truncate">{profileData?.email}</p>
+                <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>Email Address</p>
+                <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{profileData?.email}</p>
               </div>
             </div>
-            <div className="flex items-center gap-4 text-gray-600 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
-              <div className="p-2 bg-gray-100 rounded-lg"><Building className="w-4 h-4" /></div>
+            <div className="flex items-center gap-4 p-3 rounded-2xl transition-colors" style={{ color: 'var(--text-secondary)' }}>
+              <div className="p-2 rounded-lg" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}><Building className="w-4 h-4" /></div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Department</p>
-                <p className="text-sm font-semibold truncate">{profileData?.department?.name || profileData?.department || 'General'}</p>
+                <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>Department</p>
+                <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{profileData?.department?.name || profileData?.department || 'General'}</p>
               </div>
             </div>
           </div>
@@ -117,12 +117,12 @@ export default function ProfilePage() {
 
         {/* Right Column: Edit Form */}
         <div className="md:col-span-2 space-y-8">
-          <form onSubmit={handleUpdate} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+          <form onSubmit={handleUpdate} className="p-8 rounded-3xl shadow-sm border space-y-6" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
+              <div className="p-2 rounded-xl" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}>
                 <User size={20} />
               </div>
-              <h4 className="text-lg font-bold text-gray-900">Personal Details</h4>
+              <h4 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Personal Details</h4>
             </div>
             
             <div className="grid md:grid-cols-1 gap-6">
@@ -136,12 +136,12 @@ export default function ProfilePage() {
               />
             </div>
 
-            <div className="pt-8 border-t border-gray-100">
+            <div className="pt-8" style={{ borderTop: '1px solid var(--border)' }}>
               <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-purple-50 rounded-xl text-purple-600">
+                <div className="p-2 rounded-xl" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}>
                   <Lock size={20} />
                 </div>
-                <h4 className="text-lg font-bold text-gray-900">Security & Password</h4>
+                <h4 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Security & Password</h4>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <Input 
@@ -161,26 +161,26 @@ export default function ProfilePage() {
                   className="font-semibold"
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-4 leading-relaxed italic">
+              <p className="text-xs mt-4 leading-relaxed italic" style={{ color: 'var(--text-muted)' }}>
                 Leave password fields blank if you don't want to change it. Password must be at least 6 characters.
               </p>
             </div>
 
-            <div className="flex justify-end pt-6 border-t border-gray-50 uppercase tracking-widest font-black">
-              <Button type="submit" isLoading={saving} className="px-10 shadow-lg shadow-indigo-100">
+            <div className="flex justify-end pt-6 uppercase tracking-widest font-black" style={{ borderTop: '1px solid var(--border-light)' }}>
+              <Button type="submit" isLoading={saving} className="px-10 shadow-lg">
                 <Save className="w-4 h-4 mr-2" />
                 Save Changes
               </Button>
             </div>
           </form>
           
-          <div className="bg-indigo-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+          <div className="rounded-3xl p-8 text-white relative overflow-hidden shadow-xl" style={{ background: 'linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))' }}>
              <div className="absolute top-0 right-0 p-8 opacity-10">
                 <Shield size={120} />
              </div>
              <div className="relative z-10">
                <h4 className="text-xl font-bold mb-2">Platform Member Since</h4>
-               <p className="text-indigo-200 font-medium">
+               <p className="font-medium" style={{ opacity: 0.8 }}>
                  {new Date(profileData?.createdAt).toLocaleDateString('en-US', { 
                    year: 'numeric', 
                    month: 'long', 
@@ -189,7 +189,7 @@ export default function ProfilePage() {
                </p>
                <div className="mt-6 flex items-center gap-2">
                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                 <span className="text-xs font-bold text-indigo-300 uppercase tracking-widest">Active Account Verified</span>
+                 <span className="text-xs font-bold uppercase tracking-widest" style={{ opacity: 0.7 }}>Active Account Verified</span>
                </div>
              </div>
           </div>
