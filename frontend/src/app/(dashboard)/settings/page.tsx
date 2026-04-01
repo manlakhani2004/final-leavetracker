@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme, themes, ThemeName } from '@/contexts/ThemeContext';
 import { organizationService } from '@/lib/services';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import toast from 'react-hot-toast';
+import { Check } from 'lucide-react';
 
 export default function SettingsPage() {
   const { organization, user } = useAuth();
+  const { theme: currentTheme, setTheme } = useTheme();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: organization?.name || '',
@@ -60,19 +63,89 @@ export default function SettingsPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  if (!organization) {
-    return <div>Loading...</div>;
-  }
+  const handleThemeChange = (themeName: ThemeName) => {
+    setTheme(themeName);
+    toast.success(`Theme changed to ${themes.find(t => t.name === themeName)?.label}`, {
+      icon: '🎨',
+      style: {
+        borderRadius: '16px',
+        padding: '12px 20px',
+      },
+    });
+  };
+
+
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Organization Settings</h1>
+      <h1 
+        className="text-2xl font-bold mb-6"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        Settings
+      </h1>
 
-      <div className="max-w-3xl bg-white rounded-lg shadow p-6">
+      {/* =============================================
+          THEME / APPEARANCE SECTION
+          ============================================= */}
+      <div className="modern-card p-6 mb-8">
+        <h3 
+          className="text-base font-semibold mb-4"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          Theme
+        </h3>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {themes.map((themeOption) => {
+            const isSelected = currentTheme === themeOption.name;
+            
+            return (
+              <button
+                key={themeOption.name}
+                onClick={() => handleThemeChange(themeOption.name)}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl border transition-all text-left"
+                style={{
+                  background: isSelected ? 'var(--primary-light)' : 'var(--surface)',
+                  borderColor: isSelected ? 'var(--primary)' : 'var(--border)',
+                }}
+              >
+                {/* Color dots */}
+                <div className="flex gap-1 shrink-0">
+                  <div className="h-4 w-4 rounded-full" style={{ background: themeOption.preview.primary }} />
+                  <div className="h-4 w-4 rounded-full" style={{ background: themeOption.preview.secondary }} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                    {themeOption.label}
+                  </p>
+                </div>
+                {isSelected && (
+                  <Check size={14} className="shrink-0 ml-auto" style={{ color: 'var(--primary)' }} />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* =============================================
+          ORGANIZATION SETTINGS SECTION (Admin Only)
+          ============================================= */}
+      {user?.role === 'org_admin' && organization && (
+      <div className="max-w-3xl modern-card p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Basic Information</h3>
+            <h3 
+              className="text-lg font-medium pb-2"
+              style={{ 
+                color: 'var(--text-primary)',
+                borderBottom: `1px solid var(--border)`
+              }}
+            >
+              Basic Information
+            </h3>
             
             <Input
               label="Organization Name"
@@ -101,18 +174,32 @@ export default function SettingsPage() {
 
           {/* Working Days */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Working Days</h3>
+            <h3 
+              className="text-lg font-medium pb-2"
+              style={{ 
+                color: 'var(--text-primary)',
+                borderBottom: `1px solid var(--border)`
+              }}
+            >
+              Working Days
+            </h3>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {workingDaysOptions.map((day) => (
-                <label key={day} className="flex items-center">
+                <label key={day} className="flex items-center cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={selectedWorkingDays.includes(day)}
                     onChange={() => toggleWorkingDay(day)}
-                    className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                    className="h-4 w-4 rounded"
+                    style={{ accentColor: 'var(--primary)' }}
                   />
-                  <span className="ml-2 text-sm text-gray-700">{day}</span>
+                  <span 
+                    className="ml-2 text-sm group-hover:font-medium transition-all"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
+                    {day}
+                  </span>
                 </label>
               ))}
             </div>
@@ -120,7 +207,15 @@ export default function SettingsPage() {
 
           {/* Advanced Settings */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Advanced Settings</h3>
+            <h3 
+              className="text-lg font-medium pb-2"
+              style={{ 
+                color: 'var(--text-primary)',
+                borderBottom: `1px solid var(--border)`
+              }}
+            >
+              Advanced Settings
+            </h3>
             
             <Input
               label="Timezone"
@@ -140,7 +235,7 @@ export default function SettingsPage() {
               onChange={handleChange}
               placeholder="1 (January)"
             />
-            <p className="text-sm text-gray-500">
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
               Month number (1-12) when the leave year starts. January = 1, December = 12.
             </p>
           </div>
@@ -153,21 +248,26 @@ export default function SettingsPage() {
         </form>
 
         {/* Organization Info Display */}
-        <div className="mt-8 pt-6 border-t">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Organization Details</h3>
+        <div className="mt-8 pt-6" style={{ borderTop: `1px solid var(--border)` }}>
+          <h3 
+            className="text-lg font-medium mb-4"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Organization Details
+          </h3>
           <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
             <div>
-              <dt className="text-sm font-medium text-gray-500">Organization ID</dt>
-              <dd className="mt-1 text-sm text-gray-900">{organization._id || organization.id}</dd>
+              <dt className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Organization ID</dt>
+              <dd className="mt-1 text-sm" style={{ color: 'var(--text-primary)' }}>{organization._id || organization.id}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">Created</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Created</dt>
+              <dd className="mt-1 text-sm" style={{ color: 'var(--text-primary)' }}>
                 {organization.createdAt ? new Date(organization.createdAt).toLocaleDateString() : 'N/A'}
               </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">Status</dt>
+              <dt className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Status</dt>
               <dd className="mt-1 text-sm">
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   organization.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -179,6 +279,7 @@ export default function SettingsPage() {
           </dl>
         </div>
       </div>
+      )}
     </div>
   );
 }

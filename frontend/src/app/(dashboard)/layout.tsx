@@ -12,7 +12,6 @@ interface RoleConfig {
   theme: 'admin' | 'hr' | 'manager' | 'employee';
   title: string;
   icon: string;
-  bgGradient: string;
 }
 
 const roleConfigs: Record<string, RoleConfig> = {
@@ -20,25 +19,21 @@ const roleConfigs: Record<string, RoleConfig> = {
     theme: 'admin',
     title: 'Admin',
     icon: '🏢',
-    bgGradient: 'from-slate-50 via-indigo-50/10 to-white',
   },
   hr_manager: {
     theme: 'hr',
     title: 'HR',
     icon: '👔',
-    bgGradient: 'from-rose-50 via-pink-50/10 to-white',
   },
   manager: {
     theme: 'manager',
     title: 'Manager',
     icon: '👥',
-    bgGradient: 'from-blue-50 via-cyan-50/10 to-white',
   },
   employee: {
     theme: 'employee',
     title: 'Staff',
     icon: '🌟',
-    bgGradient: 'from-emerald-50 via-green-50/10 to-white',
   }
 };
 
@@ -56,10 +51,10 @@ function RoleBasedLayout({ children }: { children: React.ReactNode }) {
 
   if (isLoading || !user) {
     return (
-      <div className="flex items-center justify-center h-screen bg-slate-50">
+      <div className="flex items-center justify-center h-screen" style={{ background: 'var(--background)' }}>
         <div className="relative h-16 w-16">
-          <div className="absolute inset-0 rounded-full border-4 border-indigo-100 opacity-20"></div>
-          <div className="absolute inset-0 rounded-full border-4 border-t-indigo-600 animate-spin"></div>
+          <div className="absolute inset-0 rounded-full border-4 opacity-20" style={{ borderColor: 'var(--primary-light)' }}></div>
+          <div className="absolute inset-0 rounded-full border-4 border-transparent animate-spin" style={{ borderTopColor: 'var(--primary)' }}></div>
         </div>
       </div>
     );
@@ -68,11 +63,12 @@ function RoleBasedLayout({ children }: { children: React.ReactNode }) {
   const config = user?.role ? (roleConfigs[user.role] || roleConfigs.employee) : roleConfigs.employee;
 
   return (
-    <div className={cn("h-screen flex overflow-hidden bg-gradient-to-br", config.bgGradient)}>
+    <div className="h-screen flex overflow-hidden" style={{ background: 'var(--background)' }}>
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 backdrop-blur-sm z-40 lg:hidden"
+          style={{ background: 'var(--modal-overlay)' }}
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -82,16 +78,24 @@ function RoleBasedLayout({ children }: { children: React.ReactNode }) {
         "fixed inset-y-0 left-0 z-50 transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:hidden",
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
-        <div className="h-full w-80 bg-white shadow-2xl flex flex-col">
-          <div className={cn(
-            "flex items-center justify-center h-24 gap-3 bg-gradient-to-r",
-            config.theme === 'admin' ? 'from-indigo-600 to-purple-600' :
-            config.theme === 'hr' ? 'from-rose-500 to-pink-600' :
-            config.theme === 'manager' ? 'from-blue-600 to-cyan-600' :
-            'from-emerald-600 to-teal-600'
-          )}>
-            <span className="text-3xl">{config.icon}</span>
-            <h1 className="text-2xl font-black text-white tracking-tight">{config.title}</h1>
+        <div className="h-full w-80 shadow-2xl flex flex-col" style={{ background: 'var(--sidebar)' }}>
+          <div 
+            className="relative overflow-hidden py-7 px-6"
+            style={{ background: `linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))` }}
+          >
+            <div 
+              className="absolute -top-8 -right-8 w-28 h-28 rounded-full opacity-15"
+              style={{ background: '#fff' }}
+            />
+            <div className="relative flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-xl">
+                {config.icon}
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-white tracking-tight leading-none">{config.title}</h1>
+                <p className="text-[10px] font-medium text-white/60 mt-0.5 uppercase tracking-widest">Leave Tracker</p>
+              </div>
+            </div>
           </div>
           <div className="flex-1 overflow-y-auto">
             <Sidebar collapsed={false} onToggle={() => setSidebarOpen(false)} theme={config.theme} />
@@ -101,29 +105,48 @@ function RoleBasedLayout({ children }: { children: React.ReactNode }) {
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex lg:flex-shrink-0">
-        <div className={cn(
-          "flex flex-col transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] bg-white border-r border-slate-200/50 shadow-xl shadow-slate-200/40",
-          sidebarCollapsed ? "w-24" : "w-80"
-        )}>
+        <div 
+          className={cn(
+            "flex flex-col transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] border-r shadow-xl",
+            sidebarCollapsed ? "w-24" : "w-80"
+          )}
+          style={{ 
+            background: 'var(--sidebar)', 
+            borderColor: 'var(--border-light)',
+            boxShadow: `0 20px 25px -5px var(--card-shadow)`
+          }}
+        >
           {/* Logo Section */}
-          <div className={cn(
-            "flex items-center justify-center h-24 overflow-hidden bg-gradient-to-r transition-all duration-500",
-            config.theme === 'admin' ? 'from-indigo-600 to-purple-600' :
-            config.theme === 'hr' ? 'from-rose-500 to-pink-600' :
-            config.theme === 'manager' ? 'from-blue-600 to-cyan-600' :
-            'from-emerald-600 to-teal-600'
-          )}>
+          <div 
+            className="relative overflow-hidden transition-all duration-500"
+            style={{ 
+              background: `linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))`,
+              padding: sidebarCollapsed ? '20px 0' : '28px 24px',
+            }}
+          >
+            {/* Decorative bg circle */}
+            <div 
+              className="absolute -top-8 -right-8 w-28 h-28 rounded-full opacity-15"
+              style={{ background: '#fff' }}
+            />
             {!sidebarCollapsed ? (
-              <div className="flex items-center gap-3 animate-in fade-in zoom-in duration-500">
-                <span className="text-3xl">{config.icon}</span>
-                <h1 className="text-2xl font-black text-white tracking-tight leading-none pt-1">
-                  {config.title}
-                </h1>
+              <div className="relative flex items-center gap-3 animate-in fade-in duration-300">
+                <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-xl">
+                  {config.icon}
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-white tracking-tight leading-none">
+                    {config.title}
+                  </h1>
+                  <p className="text-[10px] font-medium text-white/60 mt-0.5 uppercase tracking-widest">Leave Tracker</p>
+                </div>
               </div>
             ) : (
-              <span className="text-3xl animate-in fade-in zoom-in duration-500">
-                {config.icon}
-              </span>
+              <div className="flex justify-center animate-in fade-in duration-300">
+                <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-xl">
+                  {config.icon}
+                </div>
+              </div>
             )}
           </div>
           

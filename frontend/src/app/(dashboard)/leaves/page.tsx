@@ -95,25 +95,25 @@ export default function LeavesPage() {
       {/* Balance Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
-          icon="📅"
+          icon={<span className="text-2xl">📅</span>}
           title="Total Allocated"
           value={summary?.balances?.totalAllocated || 0}
           subtitle="Annual allowance"
-          color="bg-gradient-to-br from-indigo-500 to-purple-600"
+          color="indigo"
         />
         <StatCard
-          icon="✈️"
+          icon={<span className="text-2xl">✈️</span>}
           title="Leaves Taken"
           value={summary?.balances?.totalUsed || 0}
           subtitle="Approved days"
-          color="bg-gradient-to-br from-orange-500 to-red-600"
+          color="rose"
         />
         <StatCard
-          icon="🎯"
+          icon={<span className="text-2xl">🎯</span>}
           title="Remaining"
           value={summary?.balances?.totalRemaining || 0}
           subtitle="Available to use"
-          color="bg-gradient-to-br from-emerald-500 to-teal-600"
+          color="emerald"
         />
       </div>
 
@@ -155,7 +155,7 @@ export default function LeavesPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-lg p-6 text-white">
+          <div className="rounded-2xl shadow-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))' }}>
             <h4 className="font-bold mb-2">Need Help?</h4>
             <p className="text-sm opacity-90 mb-4">Check our leave policy or contact HR for any clarifications regarding your balance.</p>
             <Button variant="outline" className="w-full border-white/30 hover:bg-white/10 text-white">

@@ -9,7 +9,10 @@ interface TableProps {
 export function Table({ children, className }: TableProps) {
   return (
     <div className="overflow-x-auto">
-      <table className={cn('min-w-full divide-y divide-gray-200', className)}>
+      <table 
+        className={cn('min-w-full', className)}
+        style={{ borderColor: 'var(--table-border)' }}
+      >
         {children}
       </table>
     </div>
@@ -21,7 +24,11 @@ interface TableHeaderProps {
 }
 
 export function TableHeader({ children }: TableHeaderProps) {
-  return <thead className="bg-gray-50">{children}</thead>;
+  return (
+    <thead style={{ background: 'var(--table-header-bg)' }}>
+      {children}
+    </thead>
+  );
 }
 
 interface TableBodyProps {
@@ -29,7 +36,17 @@ interface TableBodyProps {
 }
 
 export function TableBody({ children }: TableBodyProps) {
-  return <tbody className="bg-white divide-y divide-gray-200">{children}</tbody>;
+  return (
+    <tbody 
+      className="divide-y"
+      style={{ 
+        background: 'var(--table-body-bg)',
+        borderColor: 'var(--table-border)',
+      }}
+    >
+      {children}
+    </tbody>
+  );
 }
 
 interface TableRowProps {
@@ -52,10 +69,13 @@ export function TableCell({ children, className, header = false }: TableCellProp
   return (
     <Component
       className={cn(
-        'px-6 py-4 whitespace-nowrap text-sm text-gray-900',
-        header ? 'font-medium text-gray-700' : '',
+        'px-6 py-4 whitespace-nowrap text-sm',
         className
       )}
+      style={{ 
+        color: header ? 'var(--table-header-text)' : 'var(--table-text)',
+        fontWeight: header ? 500 : undefined,
+      }}
     >
       {children}
     </Component>

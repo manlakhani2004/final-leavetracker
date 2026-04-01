@@ -74,7 +74,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
       {/* Hero Welcome Card */}
-      <div className="relative overflow-hidden rounded-[2.5rem] bg-indigo-600 p-10 md:p-14 text-white shadow-2xl shadow-indigo-200">
+      <div className="relative overflow-hidden rounded-[2.5rem] p-10 md:p-14 text-white shadow-2xl" style={{ background: `linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))`, boxShadow: `0 25px 50px -12px var(--primary-shadow)` }}>
         <div className="absolute top-0 right-0 -mr-20 -mt-20 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 h-64 w-64 rounded-full bg-purple-500/20 blur-3xl" />
         
@@ -85,7 +85,7 @@ export default function DashboardPage() {
             </Badge>
             <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight">
               Welcome Back,<br />
-              <span className="text-indigo-200">{user?.name}! 👋</span>
+              <span style={{ opacity: 0.8 }}>{user?.name}! 👋</span>
             </h1>
             <p className="text-lg font-bold text-indigo-100/80 uppercase tracking-widest max-w-xl">
               {organization?.name} • Management Hub
@@ -107,12 +107,12 @@ export default function DashboardPage() {
       {/* Admin Central View */}
       {user?.role === 'org_admin' && (
         <div className="space-y-10">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-6">
-            <h2 className="text-2xl font-black text-slate-900 flex items-center gap-3">
-              <ShieldCheck className="text-indigo-600" size={32} />
+          <div className="flex items-center justify-between pb-6" style={{ borderBottom: `1px solid var(--border-light)` }}>
+            <h2 className="text-2xl font-black flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
+              <ShieldCheck size={32} style={{ color: 'var(--primary)' }} />
               Organization Overview
             </h2>
-            <Link href="/users" className="group flex items-center gap-2 text-sm font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-colors">
+            <Link href="/users" className="group flex items-center gap-2 text-sm font-black uppercase tracking-widest transition-colors" style={{ color: 'var(--primary-text)' }}>
               Manage Workforce <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -130,11 +130,11 @@ export default function DashboardPage() {
             <div className="modern-card p-8 space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <TrendingUp className="text-indigo-600" size={24} />
+                  <h3 className="text-xl font-black flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                    <TrendingUp size={24} style={{ color: 'var(--primary)' }} />
                     Monthly Application Trends
                   </h3>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Application velocity over 6 months</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mt-1" style={{ color: 'var(--text-muted)' }}>Application velocity over 6 months</p>
                 </div>
               </div>
               
@@ -178,11 +178,11 @@ export default function DashboardPage() {
             <div className="modern-card p-8 space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <PieChartIcon className="text-purple-600" size={24} />
+                  <h3 className="text-xl font-black flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                    <PieChartIcon size={24} style={{ color: 'var(--primary)' }} />
                     Workforce Distribution
                   </h3>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Headcount by department</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mt-1" style={{ color: 'var(--text-muted)' }}>Headcount by department</p>
                 </div>
               </div>
               
@@ -226,9 +226,9 @@ export default function DashboardPage() {
           {/* Personal Balance Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-6">
-                <h2 className="text-2xl font-black text-slate-900 flex items-center gap-3">
-                  <BarChart3 className="text-indigo-600" size={32} />
+              <div className="flex items-center justify-between pb-6" style={{ borderBottom: `1px solid var(--border-light)` }}>
+                <h2 className="text-2xl font-black flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
+                   <BarChart3 size={32} style={{ color: 'var(--primary)' }} />
                    Leave Quota Statistics
                 </h2>
               </div>
@@ -240,21 +240,25 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-6">
-                <h2 className="text-2xl font-black text-slate-900">Shortcuts</h2>
+              <div className="flex items-center justify-between pb-6" style={{ borderBottom: `1px solid var(--border-light)` }}>
+                <h2 className="text-2xl font-black" style={{ color: 'var(--text-primary)' }}>Shortcuts</h2>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                 <Link href="/leaves/apply" className="modern-card p-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white flex items-center justify-between group hover:-translate-y-1 transition-all">
+                 <Link 
+                   href="/leaves/apply" 
+                   className="modern-card p-6 text-white flex items-center justify-between group hover:-translate-y-1 transition-all"
+                   style={{ background: 'linear-gradient(to right, var(--primary-gradient-from), var(--primary-gradient-to))' }}
+                 >
                     <div className="space-y-1">
                       <p className="font-black text-lg">Apply for Leave</p>
                       <p className="text-xs font-bold text-white/70 uppercase tracking-widest">Submit new request</p>
                     </div>
                     <PlaneTakeoff size={32} className="group-hover:translate-x-1 transition-transform" />
                  </Link>
-                 <Link href="/leaves" className="modern-card p-6 hover:bg-slate-50 transition-all group flex items-center justify-between">
+                 <Link href="/leaves" className="modern-card p-6 transition-all group flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="font-black text-lg text-slate-900">Request History</p>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Track your status</p>
+                       <p className="font-black text-lg" style={{ color: 'var(--text-primary)' }}>Request History</p>
+                       <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Track your status</p>
                     </div>
                     <ArrowRight size={24} className="text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
                  </Link>
@@ -265,27 +269,27 @@ export default function DashboardPage() {
           {/* Upcoming & Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             <div className="modern-card overflow-hidden">
-               <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                  <h3 className="text-xl font-black text-slate-900">Timeline</h3>
-                  <Badge variant="default" className="bg-indigo-600 text-white">Upcoming</Badge>
+               <div className="p-8 flex items-center justify-between" style={{ borderBottom: `1px solid var(--border-light)`, background: 'var(--surface-hover)' }}>
+                   <h3 className="text-xl font-black" style={{ color: 'var(--text-primary)' }}>Timeline</h3>
+                   <Badge variant="default" className="text-white" style={{ background: 'var(--primary)' }}>Upcoming</Badge>
                </div>
                <div className="p-8">
                   {data?.upcomingLeaves?.length > 0 ? (
                     <div className="space-y-6">
                       {data.upcomingLeaves.map((leave: any) => (
-                        <div key={leave._id} className="flex items-center justify-between p-5 rounded-3xl bg-slate-50 border border-slate-100 hover:shadow-lg hover:shadow-slate-100 transition-all duration-300 group">
+                        <div key={leave._id} className="flex items-center justify-between p-5 rounded-3xl transition-all duration-300 group" style={{ background: 'var(--surface-secondary)', border: `1px solid var(--border-light)` }}>
                           <div className="flex items-center gap-5">
-                            <div className="h-14 w-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform">
+                            <div className="h-14 w-14 rounded-2xl flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform" style={{ background: 'var(--surface)' }}>
                                📅
                             </div>
                             <div>
-                              <p className="font-black text-slate-900">{leave.leaveType?.name}</p>
-                              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest pt-1">
+                              <p className="font-black" style={{ color: 'var(--text-primary)' }}>{leave.leaveType?.name}</p>
+                              <p className="text-xs font-bold uppercase tracking-widest pt-1" style={{ color: 'var(--text-muted)' }}>
                                 {new Date(leave.fromDate).toLocaleDateString()} – {new Date(leave.toDate).toLocaleDateString()}
                               </p>
                             </div>
                           </div>
-                          <p className="text-2xl font-black text-indigo-600">{leave.totalDays}<span className="text-xs font-bold text-slate-400 uppercase tracking-tighter ml-1">Days</span></p>
+                          <p className="text-2xl font-black" style={{ color: 'var(--primary-text)' }}>{leave.totalDays}<span className="text-xs font-bold uppercase tracking-tighter ml-1" style={{ color: 'var(--text-muted)' }}>Days</span></p>
                         </div>
                       ))}
                     </div>
@@ -301,16 +305,16 @@ export default function DashboardPage() {
             </div>
 
             <div className="modern-card overflow-hidden">
-               <div className="p-8 border-b border-slate-100 bg-slate-50/50">
-                  <h3 className="text-xl font-black text-slate-900">Allocation Health</h3>
+               <div className="p-8" style={{ borderBottom: `1px solid var(--border-light)`, background: 'var(--surface-hover)' }}>
+                   <h3 className="text-xl font-black" style={{ color: 'var(--text-primary)' }}>Allocation Health</h3>
                </div>
                <div className="p-8 space-y-8">
                   {data?.balances?.byType?.map((balance: any, index: number) => (
                     <div key={index} className="space-y-4">
                        <div className="flex justify-between items-end">
                           <div>
-                             <h4 className="font-black text-slate-900">{balance.leaveType?.name}</h4>
-                             <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.1em]">{balance.remaining} of {balance.allocated} days left</p>
+                             <h4 className="font-black" style={{ color: 'var(--text-primary)' }}>{balance.leaveType?.name}</h4>
+                             <p className="text-xs font-bold uppercase tracking-[0.1em]" style={{ color: 'var(--text-muted)' }}>{balance.remaining} of {balance.allocated} days left</p>
                           </div>
                           <div className={cn(
                             "px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest",

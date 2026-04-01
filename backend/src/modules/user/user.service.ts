@@ -44,11 +44,16 @@ export class UserService {
       organizationId: new Types.ObjectId(organizationId),
     };
 
-    if (createUserDto.managerId) {
-      userData.managerId = new Types.ObjectId(createUserDto.managerId as string);
+    if (userData.managerId === '' || userData.managerId === null) {
+      delete userData.managerId;
+    } else if (userData.managerId) {
+      userData.managerId = new Types.ObjectId(userData.managerId as string);
     }
-    if (createUserDto.departmentId) {
-      userData.departmentId = new Types.ObjectId(createUserDto.departmentId);
+
+    if (userData.departmentId === '' || userData.departmentId === null) {
+      delete userData.departmentId;
+    } else if (userData.departmentId) {
+      userData.departmentId = new Types.ObjectId(userData.departmentId as string);
     }
 
     const user = await this.userModel.create(userData);
@@ -125,11 +130,24 @@ export class UserService {
       delete updateData.password;
     }
 
-    if (updateData.managerId) {
+    updateData.$unset = {};
+
+    if (updateData.managerId === '' || updateData.managerId === null) {
+      updateData.$unset.managerId = 1;
+      delete updateData.managerId;
+    } else if (updateData.managerId) {
       updateData.managerId = new Types.ObjectId(updateData.managerId as string);
     }
-    if (updateData.departmentId) {
-      updateData.departmentId = new Types.ObjectId(updateData.departmentId);
+
+    if (updateData.departmentId === '' || updateData.departmentId === null) {
+      updateData.$unset.departmentId = 1;
+      delete updateData.departmentId;
+    } else if (updateData.departmentId) {
+      updateData.departmentId = new Types.ObjectId(updateData.departmentId as string);
+    }
+
+    if (Object.keys(updateData.$unset).length === 0) {
+      delete updateData.$unset;
     }
 
     const user = await this.userModel.findOneAndUpdate(

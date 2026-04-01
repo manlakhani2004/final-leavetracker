@@ -24,8 +24,22 @@ export function Switch({
     <div className={cn("flex items-center justify-between gap-x-4 py-2", className)}>
       {(label || subLabel) && (
         <div className="flex flex-col">
-          {label && <span className="text-sm font-semibold text-gray-900">{label}</span>}
-          {subLabel && <span className="text-xs text-gray-500">{subLabel}</span>}
+          {label && (
+            <span 
+              className="text-sm font-semibold"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              {label}
+            </span>
+          )}
+          {subLabel && (
+            <span 
+              className="text-xs"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              {subLabel}
+            </span>
+          )}
         </div>
       )}
       <button
@@ -35,10 +49,13 @@ export function Switch({
         disabled={disabled}
         onClick={() => !disabled && onChange(!checked)}
         className={cn(
-          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2",
-          checked ? "bg-indigo-600" : "bg-gray-200",
+          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2",
           disabled && "opacity-50 cursor-not-allowed"
         )}
+        style={{ 
+          background: checked ? 'var(--switch-active)' : 'var(--switch-inactive)',
+          '--tw-ring-color': 'var(--focus-ring)',
+        } as React.CSSProperties}
       >
         <span
           aria-hidden="true"

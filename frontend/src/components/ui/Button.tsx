@@ -15,19 +15,11 @@ export function Button({
   className,
   children,
   disabled,
+  style,
   ...props
 }: ButtonProps) {
   const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-2xl transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:scale-[0.98]';
   
-  const variantStyles = {
-    primary: 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-[0_8px_20px_-6px_rgba(79,70,229,0.5)] hover:shadow-[0_12px_24px_-8px_rgba(79,70,229,0.6)] focus:ring-indigo-500',
-    secondary: 'bg-white text-slate-700 border border-slate-200 shadow-sm hover:bg-slate-50 hover:border-slate-300 focus:ring-slate-300',
-    danger: 'bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-[0_8px_20px_-6px_rgba(244,63,94,0.5)] hover:shadow-[0_12px_24px_-8px_rgba(244,63,94,0.6)] focus:ring-rose-500',
-    success: 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-[0_8px_20px_-6px_rgba(16,185,129,0.5)] hover:shadow-[0_12px_24px_-8px_rgba(16,185,129,0.6)] focus:ring-emerald-500',
-    outline: 'border-2 border-indigo-100 text-indigo-600 bg-white/50 backdrop-blur-sm hover:bg-indigo-50 hover:border-indigo-200 focus:ring-indigo-400',
-    ghost: 'text-slate-600 hover:bg-slate-100/80 hover:text-indigo-600 transition-colors',
-  };
-
   const sizeStyles = {
     sm: 'px-4 py-2 text-sm',
     md: 'px-6 py-3 text-base',
@@ -35,9 +27,52 @@ export function Button({
     icon: 'p-2',
   };
 
+  const getVariantStyles = (): React.CSSProperties => {
+    switch (variant) {
+      case 'primary':
+        return {
+          background: `linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))`,
+          color: '#ffffff',
+          boxShadow: `0 8px 20px -6px var(--primary-shadow)`,
+        };
+      case 'secondary':
+        return {
+          background: 'var(--surface)',
+          color: 'var(--text-secondary)',
+          border: `1px solid var(--border)`,
+        };
+      case 'danger':
+        return {
+          background: 'linear-gradient(135deg, #f43f5e, #dc2626)',
+          color: '#ffffff',
+          boxShadow: '0 8px 20px -6px rgba(244,63,94,0.5)',
+        };
+      case 'success':
+        return {
+          background: 'linear-gradient(135deg, #10b981, #0d9488)',
+          color: '#ffffff',
+          boxShadow: '0 8px 20px -6px rgba(16,185,129,0.5)',
+        };
+      case 'outline':
+        return {
+          border: `2px solid var(--primary-light)`,
+          color: 'var(--primary-text)',
+          background: 'var(--surface)',
+        };
+      case 'ghost':
+        return {
+          color: 'var(--text-secondary)',
+          background: 'transparent',
+        };
+      default:
+        return {};
+    }
+  };
+
   return (
     <button
-      className={cn(baseStyles, variantStyles[variant], sizeStyles[size], className)}
+      className={cn(baseStyles, sizeStyles[size], className)}
+      style={{ ...getVariantStyles(), ...style }}
       disabled={disabled || isLoading}
       {...props}
     >

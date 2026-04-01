@@ -17,7 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="fixed inset-0 flex z-40">
             <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setSidebarOpen(false)}></div>
             <div className="relative flex-1 flex flex-col max-w-xs w-full bg-gradient-to-b from-indigo-800 to-purple-800 shadow-2xl">
-              <Sidebar role="org_admin" />
+              <Sidebar theme="admin" />
             </div>
           </div>
         </div>
@@ -30,7 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <h1 className="text-2xl font-bold text-white">🏢 Admin Panel</h1>
               </div>
               <div className="flex-1 flex flex-col overflow-y-auto">
-                <Sidebar role="org_admin" />
+                <Sidebar theme="admin" />
               </div>
             </div>
           </div>
