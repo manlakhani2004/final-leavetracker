@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
+import DeleteModal from '@/components/ui/DeleteModal';
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/utils';
 
@@ -15,6 +16,9 @@ export default function LeaveTypesPage() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingType, setEditingType] = useState<any>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [typeToDelete, setTypeToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     totalDaysAllowed: 0,
@@ -99,15 +103,25 @@ export default function LeaveTypesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this leave type?')) return;
+  const handleDelete = (type: any) => {
+    setTypeToDelete(type);
+    setDeleteModalOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!typeToDelete) return;
+    
+    setIsDeleting(true);
     try {
-      await leaveTypeService.deleteLeaveType(id);
+      await leaveTypeService.deleteLeaveType(typeToDelete._id || typeToDelete.id);
       toast.success('Leave type deleted');
       loadLeaveTypes();
+      setDeleteModalOpen(false);
+      setTypeToDelete(null);
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to delete');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -180,7 +194,7 @@ export default function LeaveTypesPage() {
                 <Button variant="outline" size="sm" onClick={() => handleOpenModal(type)} className="h-9 px-4">
                   Edit
                 </Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(type._id || type.id)} className="h-9 px-4 opacity-50 hover:opacity-100">
+                <Button variant="danger" size="sm" onClick={() => handleDelete(type)} className="h-9 px-4 opacity-50 hover:opacity-100">
                   Delete
                 </Button>
               </div>
@@ -255,6 +269,19 @@ export default function LeaveTypesPage() {
           </div>
         </form>
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setTypeToDelete(null);
+        }}
+        itemName={typeToDelete?.name || 'this leave type'}
+        itemType="leave type"
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

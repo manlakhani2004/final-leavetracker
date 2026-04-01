@@ -268,22 +268,26 @@ export class DashboardService {
 
   async getChartData(organizationId: string) {
     const today = new Date();
+    
+    // Use UTC dates to avoid timezone issues
+    const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    
     const last6Months = Array.from({ length: 6 }, (_, i) => {
-      const d = new Date(today);
-      d.setMonth(d.getMonth() - i);
+      const d = new Date(Date.UTC(todayUTC.getUTCFullYear(), todayUTC.getUTCMonth() - i, 1));
       return {
-        month: d.toLocaleString('default', { month: 'short' }),
-        year: d.getFullYear(),
-        monthNum: d.getMonth(),
+        month: d.toLocaleString('default', { month: 'short', timeZone: 'UTC' }),
+        year: d.getUTCFullYear(),
+        monthNum: d.getUTCMonth(),
       };
     }).reverse();
 
-    // Monthly trends
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth() - 5, 1);
+    // Monthly trends - use UTC for consistent date filtering
+    const startOfMonth = new Date(Date.UTC(todayUTC.getUTCFullYear(), todayUTC.getUTCMonth() - 5, 1));
+    
     const monthlyStats = await this.leaveAppModel.aggregate([
       {
         $match: {
-          organizationId: new Types.ObjectId(organizationId),
+          organizationId: organizationId,  // Use string instead of ObjectId
           fromDate: { $gte: startOfMonth },
         },
       },
@@ -314,7 +318,7 @@ export class DashboardService {
     const deptStats = await this.userModel.aggregate([
       {
         $match: {
-          organizationId: new Types.ObjectId(organizationId),
+          organizationId: organizationId,  // Use string instead of ObjectId
           isActive: true,
         },
       },

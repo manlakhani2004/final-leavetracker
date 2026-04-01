@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import DeleteModal from '@/components/ui/DeleteModal';
 import { Search, Filter, UserPlus, Users, MoreVertical, Edit2, Trash2, Mail, Shield, Briefcase } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -19,6 +20,9 @@ export default function UsersPage() {
   const [departments, setDepartments] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -84,7 +88,21 @@ export default function UsersPage() {
     e.preventDefault();
     try {
       if (editingUser) {
-        await userService.updateUser(editingUser?._id || editingUser?.id, formData);
+        // Create update payload without password if it's empty
+        const updatePayload: any = {
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          departmentId: formData.departmentId,
+          designation: formData.designation,
+        };
+        
+        // Only include password if it's not empty (user wants to change password)
+        if (formData.password && formData.password.trim() !== '') {
+          updatePayload.password = formData.password;
+        }
+        
+        await userService.updateUser(editingUser?._id || editingUser?.id, updatePayload);
         toast.success('User updated successfully');
       } else {
         await userService.createUser(formData);
@@ -97,14 +115,25 @@ export default function UsersPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deactivate this user? They will no longer be able to login.')) return;
+  const handleDelete = (user: any) => {
+    setUserToDelete(user);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+    
+    setIsDeleting(true);
     try {
-      await userService.deleteUser(id);
+      await userService.deleteUser(userToDelete._id);
       toast.success('User deactivated');
       loadUsers();
+      setDeleteModalOpen(false);
+      setUserToDelete(null);
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Action failed');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -293,7 +322,7 @@ export default function UsersPage() {
                         <Edit2 size={16} />
                       </button>
                       <button 
-                        onClick={() => handleDelete(user._id)}
+                        onClick={() => handleDelete(user)}
                         className="p-2.5 rounded-xl transition-all"
                         style={{ 
                           color: 'var(--text-muted)',
@@ -374,6 +403,19 @@ export default function UsersPage() {
           </div>
         </form>
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setUserToDelete(null);
+        }}
+        itemName={userToDelete?.name || 'this user'}
+        itemType="user"
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }
