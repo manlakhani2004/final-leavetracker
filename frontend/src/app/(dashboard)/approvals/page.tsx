@@ -88,22 +88,38 @@ export default function ApprovalsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Leave Approvals</h1>
+      <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Leave Approvals</h1>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      <div className="mb-6" style={{ borderBottom: `1px solid var(--border)` }}>
         <nav className="-mb-px flex space-x-8">
           {['pending', 'approved', 'rejected'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
               className={`
-                py-4 px-1 border-b-2 font-medium text-sm capitalize
+                py-4 px-1 border-b-2 font-medium text-sm capitalize transition-all
                 ${activeTab === tab
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? ''
+                  : 'border-transparent'
                 }
               `}
+              style={{
+                borderBottomColor: activeTab === tab ? 'var(--primary)' : 'transparent',
+                color: activeTab === tab ? 'var(--primary)' : 'var(--text-muted)'
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== tab) {
+                  e.currentTarget.style.color = 'var(--text-secondary)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== tab) {
+                  e.currentTarget.style.color = 'var(--text-muted)';
+                  e.currentTarget.style.borderColor = 'transparent';
+                }
+              }}
             >
               {tab}
             </button>
@@ -112,67 +128,75 @@ export default function ApprovalsPage() {
       </div>
 
       {/* Applications Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="modern-card rounded-lg">
+        <div className="overflow-x-auto">
+          <table className="min-w-full" style={{ borderCollapse: 'separate', borderSpacing: '0' }}>
+          <thead style={{ background: 'var(--surface-secondary)' }}>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 Employee
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 Leave Type
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 Dates
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 Days
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 Reason
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 Applied On
               </th>
               {activeTab === 'pending' && (
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                   Actions
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody>
             {applications.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={8} className="px-6 py-8 text-center" style={{ color: 'var(--text-muted)' }}>
                   No {activeTab} applications found
                 </td>
               </tr>
             ) : (
               applications.map((app) => (
-                <tr key={app._id || app.id}>
+                <tr 
+                  key={app._id || app.id}
+                  style={{ 
+                    borderBottom: `1px solid var(--border)`,
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{app.userId?.name || 'N/A'}</div>
-                    <div className="text-sm text-gray-500">{app.userId?.email || ''}</div>
+                    <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{app.userId?.name || 'N/A'}</div>
+                    <div className="text-sm" style={{ color: 'var(--text-muted)' }}>{app.userId?.email || ''}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{app.leaveTypeId?.name || 'N/A'}</div>
+                    <div className="text-sm" style={{ color: 'var(--text-primary)' }}>{app.leaveTypeId?.name || 'N/A'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm" style={{ color: 'var(--text-primary)' }}>
                       {new Date(app.fromDate).toLocaleDateString()}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                       to {new Date(app.toDate).toLocaleDateString()}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--text-primary)' }}>
                     {app.totalDays}
                   </td>
-                  <td className="px-6 py-4 max-w-xs truncate text-sm text-gray-900">
+                  <td className="px-6 py-4 max-w-xs truncate text-sm" style={{ color: 'var(--text-primary)' }}>
                     {app.reason}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -180,7 +204,7 @@ export default function ApprovalsPage() {
                       {app.status}
                     </Badge>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--text-muted)' }}>
                     {new Date(app.createdAt).toLocaleDateString()}
                   </td>
                   {activeTab === 'pending' && (
@@ -209,6 +233,7 @@ export default function ApprovalsPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Rejection Modal */}

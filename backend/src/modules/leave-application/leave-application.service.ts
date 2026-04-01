@@ -73,13 +73,17 @@ export class LeaveApplicationService {
       }
 
       const year = fromDate.getFullYear();
+      console.log(year);
+      console.log(userId);
+      console.log(organizationId);
+      console.log(createLeaveApplicationDto.leaveTypeId);
       let balance = await this.leaveBalanceModel.findOne({
         userId,
         organizationId,
         leaveTypeId: createLeaveApplicationDto.leaveTypeId,
         year,
       });
-
+      console.log(balance);
       if (!balance) {
         // Lazy initialize the leave balance for the user if they've never applied for this type before
         try {

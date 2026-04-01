@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { MailModule } from '../../mail/mail.module';
 import { Organization, OrganizationSchema } from '../../schemas/organization.schema';
 import { User, UserSchema } from '../../schemas/user.schema';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -14,6 +15,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: Organization.name, schema: OrganizationSchema },
       { name: User.name, schema: UserSchema },
     ]),
+    MailModule,
     JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],

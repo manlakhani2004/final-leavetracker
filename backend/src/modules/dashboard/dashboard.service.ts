@@ -29,7 +29,7 @@ export class DashboardService {
         userId, 
         organizationId, 
         year: currentYear, 
-        leaveTypeId: type._id 
+        leaveTypeId: type._id
       });
       
       if (!exists) {
@@ -37,7 +37,7 @@ export class DashboardService {
           await this.leaveBalanceModel.create({
             userId,
             organizationId,
-            leaveTypeId: type._id,
+            leaveTypeId: type._id.toString(),
             year: currentYear,
             totalAllocated: type.totalDaysAllowed,
             used: 0,

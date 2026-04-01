@@ -127,8 +127,8 @@ export default function LeaveTypesPage() {
     <div className="space-y-8">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Leave Types</h1>
-          <p className="text-gray-500 mt-1">Configure and manage leave categories for your organization</p>
+          <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Leave Types</h1>
+          <p className="mt-1" style={{ color: 'var(--text-muted)' }}>Configure and manage leave categories for your organization</p>
         </div>
         <Button onClick={() => handleOpenModal()} className="shadow-md hover:scale-105 transition-all">
           + Add Leave Type
@@ -140,14 +140,18 @@ export default function LeaveTypesPage() {
           <div 
             key={type._id || type.id} 
             className={cn(
-              "group relative bg-white rounded-2xl shadow-lg border border-transparent hover:border-indigo-100 transition-all duration-300 p-6 overflow-hidden",
-              !type.isActive && "opacity-75 bg-gray-50/50 grayscale-[0.3]"
+              "group relative rounded-2xl shadow-lg border border-transparent transition-all duration-300 p-6 overflow-hidden",
+              !type.isActive && "opacity-75"
             )}
+            style={{ 
+              backgroundColor: type.isActive ? 'var(--card-bg)' : 'var(--surface-secondary)',
+              borderColor: 'var(--card-border)'
+            }}
           >
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-900 leading-tight">{type.name}</h3>
-                <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                <h3 className="text-xl font-bold leading-tight" style={{ color: 'var(--text-primary)' }}>{type.name}</h3>
+                <p className="text-xs mt-1 uppercase tracking-wider font-semibold" style={{ color: 'var(--text-muted)' }}>
                   {type.isPaid ? 'Paid Category' : 'Unpaid Category'}
                 </p>
               </div>
@@ -159,19 +163,19 @@ export default function LeaveTypesPage() {
             </div>
             
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-gray-50 rounded-xl p-3">
-                <p className="text-xs text-gray-500 font-medium">Days / Year</p>
-                <p className="text-lg font-bold text-gray-900">{type.totalDaysAllowed}</p>
+              <div className="rounded-xl p-3" style={{ backgroundColor: 'var(--surface-secondary)' }}>
+                <p className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>Days / Year</p>
+                <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{type.totalDaysAllowed}</p>
               </div>
-              <div className="bg-gray-50 rounded-xl p-3">
-                <p className="text-xs text-gray-500 font-medium">Carry Forward</p>
-                <p className="text-lg font-bold text-gray-900">
+              <div className="rounded-xl p-3" style={{ backgroundColor: 'var(--surface-secondary)' }}>
+                <p className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>Carry Forward</p>
+                <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
                   {type.carryForwardAllowed ? `${type.carryForwardLimit}d` : 'No'}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-100 italic">
+            <div className="flex items-center justify-between pt-4 border-t italic" style={{ borderColor: 'var(--border)' }}>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={() => handleOpenModal(type)} className="h-9 px-4">
                   Edit
@@ -188,9 +192,12 @@ export default function LeaveTypesPage() {
         ))}
         
         {leaveTypes.length === 0 && (
-          <div className="col-span-full py-20 text-center bg-white rounded-2xl border-2 border-dashed border-gray-100">
+          <div className="col-span-full py-20 text-center rounded-2xl border-2 border-dashed" style={{ 
+            backgroundColor: 'var(--card-bg)', 
+            borderColor: 'var(--border)'
+          }}>
             <div className="text-4xl mb-4">✨</div>
-            <p className="text-gray-500">No leave types found. Get started by adding one!</p>
+            <p style={{ color: 'var(--text-muted)' }}>No leave types found. Get started by adding one!</p>
           </div>
         )}
       </div>
@@ -221,7 +228,7 @@ export default function LeaveTypesPage() {
             />
           </div>
 
-          <div className="space-y-4 bg-gray-50 p-4 rounded-xl">
+          <div className="space-y-4 p-4 rounded-xl" style={{ backgroundColor: 'var(--surface-secondary)' }}>
             <Switch 
               label="Carry Forward Allowed" 
               subLabel="Allow unused days to roll over to next year"

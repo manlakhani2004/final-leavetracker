@@ -10,6 +10,7 @@ import { LeaveApplicationModule } from './modules/leave-application/leave-applic
 import { HolidayModule } from './modules/holiday/holiday.module';
 import { DepartmentModule } from './modules/department/department.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     HolidayModule,
     DepartmentModule,
     DashboardModule,
+    MailModule,
   ],
 })
 export class AppModule {}
