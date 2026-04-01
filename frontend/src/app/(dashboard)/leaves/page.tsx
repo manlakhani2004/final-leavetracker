@@ -25,7 +25,7 @@ export default function LeavesPage() {
     try {
       setLoading(true);
       const status = statusFilter === 'all' ? undefined : statusFilter;
-      
+
       const [leavesData, summaryData] = await Promise.all([
         leaveApplicationService.getMyLeaves(status, pagination.page, pagination.limit),
         dashboardService.getSummary()
@@ -82,8 +82,8 @@ export default function LeavesPage() {
     <div className="space-y-8 pb-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Leaves</h1>
-          <p className="text-gray-500 mt-1">Manage your leave applications and view balances</p>
+          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>My Leaves</h1>
+          <p className="mt-1" style={{ color: 'var(--text-muted)' }}>Manage your leave applications and view balances</p>
         </div>
         <Link href="/leaves/apply">
           <Button size="lg" className="shadow-lg hover:scale-105 transition-all">
@@ -120,37 +120,40 @@ export default function LeavesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Leave Type Breakdown */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/50">
-              <h3 className="font-bold text-gray-900">Leave Balance Details</h3>
+          <div className="modern-card rounded-2xl overflow-hidden">
+            <div className="px-6 py-5 border-b" style={{ background: 'var(--surface-secondary)', borderColor: 'var(--border)' }}>
+              <h3 className="font-bold" style={{ color: 'var(--text-primary)' }}>Leave Balance Details</h3>
             </div>
             <div className="p-6 space-y-4">
               {summary?.balances?.byType?.map((balance: any, index: number) => (
                 <div key={index} className="space-y-2">
                   <div className="flex justify-between items-end">
                     <div>
-                      <p className="font-semibold text-gray-900">{balance.leaveType?.name}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>{balance.leaveType?.name}</p>
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                         {balance.used} used / {balance.allocated} total
                       </p>
                     </div>
-                    <p className="text-sm font-bold text-indigo-600">
+                    <p className="text-sm font-bold" style={{ color: 'var(--primary)' }}>
                       {balance.remaining} remaining
                     </p>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2">
-                    <div 
+                  <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--surface-secondary)' }}>
+                    <div
                       className={cn(
                         "h-2 rounded-full transition-all",
-                        balance.remaining === 0 ? "bg-red-400" : "bg-indigo-500"
+                        balance.remaining === 0 ? "bg-red-400" : ""
                       )}
-                      style={{ width: `${Math.min(100, (balance.remaining / balance.allocated) * 100)}%` }}
+                      style={{ 
+                        width: `${Math.min(100, (balance.remaining / balance.allocated) * 100)}%`,
+                        backgroundColor: balance.remaining === 0 ? '#f87171' : 'var(--primary)'
+                      }}
                     />
                   </div>
                 </div>
               ))}
               {!summary?.balances?.byType?.length && (
-                <p className="text-sm text-gray-500 text-center py-4">No balances records found.</p>
+                <p className="text-sm text-center py-4" style={{ color: 'var(--text-muted)' }}>No balances records found.</p>
               )}
             </div>
           </div>
@@ -166,11 +169,11 @@ export default function LeavesPage() {
 
         {/* Applications History */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <h3 className="font-bold text-gray-900 text-lg">Leave History</h3>
+          <div className="modern-card rounded-2xl overflow-hidden">
+            <div className="px-6 py-5 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ borderColor: 'var(--border)' }}>
+              <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Leave History</h3>
               <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500">Filter:</span>
+                <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Filter:</span>
                 <Select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
@@ -187,38 +190,53 @@ export default function LeavesPage() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50/50">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Duration</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Days</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Action</th>
+              <table className="min-w-full" style={{ borderCollapse: 'separate', borderSpacing: '0' }}>
+                <thead>
+                  <tr style={{ background: 'var(--surface-secondary)' }}>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Type</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Duration</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Days</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Status</th>
+                    <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody>
                   {leaves.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                      <td colSpan={5} className="px-6 py-12 text-center" style={{ color: 'var(--text-muted)' }}>
                         <div className="text-4xl mb-2">📭</div>
                         <p>No leave applications found</p>
                       </td>
                     </tr>
                   ) : (
                     leaves.map((leave) => (
-                      <tr key={leave._id || leave.id} className="hover:bg-gray-50/50 transition-colors">
+                      <tr 
+                        key={leave._id || leave.id} 
+                        className="transition-colors"
+                        style={{ 
+                          borderBottom: `1px solid var(--border)`,
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <p className="text-sm font-bold text-gray-900">{leave.leaveTypeId?.name || 'N/A'}</p>
-                          <p className="text-xs text-gray-500 mt-0.5">Applied {new Date(leave.createdAt).toLocaleDateString()}</p>
+                          <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{leave.leaveTypeId?.name || 'N/A'}</p>
+                          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Applied {new Date(leave.createdAt).toLocaleDateString()}</p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <p className="text-sm text-gray-700">
+                          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                             {new Date(leave.fromDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(leave.toDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                          <span 
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border"
+                            style={{ 
+                              backgroundColor: 'var(--primary-light)',
+                              color: 'var(--primary-text)',
+                              borderColor: 'var(--primary-lighter)'
+                            }}
+                          >
                             {leave.totalDays} days
                           </span>
                         </td>
@@ -248,8 +266,8 @@ export default function LeavesPage() {
 
             {/* Pagination */}
             {pagination.total > pagination.limit && (
-              <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
-                <p className="text-xs text-gray-500">
+              <div className="px-6 py-4 border-t flex items-center justify-between" style={{ background: 'var(--surface-secondary)', borderColor: 'var(--border)' }}>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                   Showing <span className="font-bold">{leaves.length}</span> of {pagination.total} results
                 </p>
                 <div className="flex gap-2">

@@ -103,8 +103,8 @@ export default function HolidaysPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Holiday Calendar</h1>
-          <p className="text-gray-500 mt-1">Manage public holidays and optional leaves for your team</p>
+          <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Holiday Calendar</h1>
+          <p className="mt-1" style={{ color: 'var(--text-muted)' }}>Manage public holidays and optional leaves for your team</p>
         </div>
         <div className="flex gap-3">
           <Button onClick={handleAddClick} className="shadow-lg shadow-indigo-200">
@@ -118,7 +118,9 @@ export default function HolidaysPage() {
       {upcomingHolidays.length > 0 && (
         <div className="grid gap-6 md:grid-cols-3">
           {upcomingHolidays.map((holiday, idx) => (
-            <div key={idx} className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
+            <div key={idx} className="rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group" style={{ 
+              background: 'linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to))'
+            }}>
               <Sparkles className="absolute -right-2 -top-2 w-16 h-16 text-white/10 group-hover:scale-125 transition-transform" />
               <div className="relative z-10">
                 <div className="bg-white/20 w-fit px-3 py-1 rounded-full text-xs font-semibold mb-4 backdrop-blur-md">
@@ -139,29 +141,33 @@ export default function HolidaysPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-5 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="text-lg font-bold text-gray-900">All Holidays for {new Date().getFullYear()}</h2>
-          <Badge variant="default" className="bg-gray-100 text-gray-600 border-none font-semibold">
+      <div className="modern-card rounded-2xl overflow-hidden">
+        <div className="px-8 py-5 border-b" style={{ borderColor: 'var(--border)' }}>
+          <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>All Holidays for {new Date().getFullYear()}</h2>
+          <Badge variant="default" className="font-semibold" style={{ 
+            backgroundColor: 'var(--surface-secondary)', 
+            color: 'var(--text-secondary)',
+            border: 'none'
+          }}>
             {holidays.length} Total
           </Badge>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-100">
+          <table className="min-w-full" style={{ borderCollapse: 'separate', borderSpacing: '0' }}>
             <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Name</th>
-                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Date</th>
-                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Type</th>
-                <th className="px-8 py-4 text-right text-xs font-bold text-gray-400 uppercase tracking-widest">Action</th>
+              <tr style={{ background: 'var(--surface-secondary)' }}>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Name</th>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Date</th>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Type</th>
+                <th className="px-8 py-4 text-right text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody>
               {holidays.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-8 py-20 text-center text-gray-500">
+                  <td colSpan={4} className="px-8 py-20 text-center" style={{ color: 'var(--text-muted)' }}>
                     <div className="flex flex-col items-center">
-                      <Calendar className="w-12 h-12 text-gray-200 mb-4" />
+                      <Calendar className="w-12 h-12 mb-4" style={{ color: 'var(--text-muted)' }} />
                       <p className="font-medium">No holidays scheduled yet.</p>
                       <p className="text-sm">Click 'Add Custom' to add a new holiday for your organization.</p>
                     </div>
@@ -169,13 +175,21 @@ export default function HolidaysPage() {
                 </tr>
               ) : (
                 holidays.map((holiday) => (
-                  <tr key={holiday._id || holiday.id} className="hover:bg-gray-50/50 transition-colors">
+                  <tr 
+                    key={holiday._id || holiday.id} 
+                    className="transition-colors"
+                    style={{ 
+                      borderBottom: `1px solid var(--border)`,
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                  >
                     <td className="px-8 py-5">
-                      <span className="text-sm font-bold text-gray-900">{holiday.name}</span>
+                      <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{holiday.name}</span>
                     </td>
                     <td className="px-8 py-5">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Calendar className="w-4 h-4 mr-2 text-indigo-400" />
+                      <div className="flex items-center text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        <Calendar className="w-4 h-4 mr-2" style={{ color: 'var(--primary)' }} />
                         {new Date(holiday.date).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -187,21 +201,50 @@ export default function HolidaysPage() {
                       <Badge variant={holiday.type === 'national' ? 'approved' : 'pending'} 
                              className={cn(
                                "px-3 py-1 capitalize",
-                               holiday.type === 'national' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-amber-50 text-amber-600 border-amber-100'
-                             )}>
+                               holiday.type === 'national' ? '' : ''
+                             )}
+                             style={{
+                               backgroundColor: holiday.type === 'national' ? 'var(--primary-light)' : 'rgba(245, 158, 11, 0.1)',
+                               color: holiday.type === 'national' ? 'var(--primary)' : 'rgb(245, 158, 11)',
+                               borderColor: holiday.type === 'national' ? 'var(--primary-lighter)' : 'rgba(245, 158, 11, 0.2)'
+                             }}>
                         {holiday.type}
                       </Badge>
                     </td>
                     <td className="px-8 py-5 text-right flex justify-end gap-2">
                       <button 
                         onClick={() => handleEdit(holiday)}
-                        className="p-2 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                        className="p-2 rounded-lg transition-all"
+                        style={{ 
+                          color: 'var(--text-muted)',
+                          backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--primary-light)';
+                          e.currentTarget.style.color = 'var(--primary)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--text-muted)';
+                        }}
                       >
                         <Pencil className="w-5 h-5" />
                       </button>
                       <button 
                         onClick={() => handleDelete(holiday._id || holiday.id)}
-                        className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                        className="p-2 rounded-lg transition-all"
+                        style={{ 
+                          color: 'var(--text-muted)',
+                          backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                          e.currentTarget.style.color = '#ef4444';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--text-muted)';
+                        }}
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>

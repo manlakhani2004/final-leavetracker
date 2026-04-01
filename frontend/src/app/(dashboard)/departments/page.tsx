@@ -93,8 +93,8 @@ export default function DepartmentsPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Departments</h1>
-          <p className="text-gray-500 mt-1">Organize your team into departments and assign heads</p>
+          <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Departments</h1>
+          <p className="mt-1" style={{ color: 'var(--text-muted)' }}>Organize your team into departments and assign heads</p>
         </div>
         <Button onClick={() => {
           setEditingId(null);
@@ -107,69 +107,77 @@ export default function DepartmentsPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+         <div className="modern-card p-6 rounded-2xl flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)' }}>
                <Building2 className="w-6 h-6" />
             </div>
             <div>
-               <p className="text-sm text-gray-500 font-medium">Total Departments</p>
-               <h3 className="text-2xl font-bold text-gray-900">{departments.length}</h3>
+               <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Total Departments</p>
+               <h3 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{departments.length}</h3>
             </div>
          </div>
-         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+         <div className="modern-card p-6 rounded-2xl flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'rgb(16, 185, 129)' }}>
                <Users className="w-6 h-6" />
             </div>
             <div>
-               <p className="text-sm text-gray-500 font-medium">Active Departments</p>
-               <h3 className="text-2xl font-bold text-gray-900">{departments.filter(d => d.isActive).length}</h3>
+               <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Active Departments</p>
+               <h3 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{departments.filter(d => d.isActive).length}</h3>
             </div>
          </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="modern-card rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-100">
+          <table className="min-w-full" style={{ borderCollapse: 'separate', borderSpacing: '0' }}>
             <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Name</th>
-                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Department Head</th>
-                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                <th className="px-8 py-4 text-right text-xs font-bold text-gray-400 uppercase tracking-widest">Action</th>
+              <tr style={{ background: 'var(--surface-secondary)' }}>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Name</th>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Department Head</th>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Status</th>
+                <th className="px-8 py-4 text-right text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody>
               {departments.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-8 py-20 text-center text-gray-500">
+                  <td colSpan={4} className="px-8 py-20 text-center" style={{ color: 'var(--text-muted)' }}>
                     <div className="flex flex-col items-center">
-                      <Building2 className="w-12 h-12 text-gray-200 mb-4" />
+                      <Building2 className="w-12 h-12 mb-4" style={{ color: 'var(--text-muted)' }} />
                       <p className="font-medium">No departments found.</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 departments.map((dept) => (
-                  <tr key={dept._id} className="hover:bg-gray-50/50 transition-colors">
+                  <tr 
+                    key={dept._id} 
+                    className="transition-colors"
+                    style={{ 
+                      borderBottom: `1px solid var(--border)`,
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                  >
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)' }}>
                           <Building2 className="w-4 h-4" />
                         </div>
-                        <span className="text-sm font-bold text-gray-900">{dept.name}</span>
+                        <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{dept.name}</span>
                       </div>
                     </td>
                     <td className="px-8 py-5">
-                      <div className="flex items-center text-sm text-gray-600">
+                      <div className="flex items-center text-sm" style={{ color: 'var(--text-secondary)' }}>
                         {dept.headId ? (
                           <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-[10px] font-bold">
+                            <div className="w-6 h-6 rounded-full flex items-center justify-center font-bold" style={{ backgroundColor: 'var(--surface-secondary)', color: 'var(--text-primary)', fontSize: '10px' }}>
                               {dept.headId.name?.charAt(0)}
                             </div>
                             <span>{dept.headId.name}</span>
                           </div>
                         ) : (
-                           <span className="text-gray-400 italic">Not Assigned</span>
+                           <span className="italic" style={{ color: 'var(--text-muted)' }}>Not Assigned</span>
                         )}
                       </div>
                     </td>
@@ -178,16 +186,40 @@ export default function DepartmentsPage() {
                         {dept.isActive ? 'Active' : 'Inactive'}
                       </Badge>
                     </td>
-                    <td className="px-8 py-5 text-right flex justify-end gap-2 text-right">
+                    <td className="px-8 py-5 text-right flex justify-end gap-2">
                       <button 
                         onClick={() => handleEdit(dept)}
-                        className="p-2 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                        className="p-2 rounded-lg transition-all"
+                        style={{ 
+                          color: 'var(--primary)',
+                          backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--primary-light)';
+                          e.currentTarget.style.color = 'var(--primary-hover)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--primary)';
+                        }}
                       >
                         <Pencil className="w-5 h-5" />
                       </button>
                       <button 
                         onClick={() => handleDelete(dept._id)}
-                        className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                        className="p-2 rounded-lg transition-all"
+                        style={{ 
+                          color: '#ef4444',
+                          backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                          e.currentTarget.style.color = '#dc2626';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = '#ef4444';
+                        }}
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>
@@ -230,7 +262,7 @@ export default function DepartmentsPage() {
                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
              />
-             <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Department is active</label>
+             <label htmlFor="isActive" className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Department is active</label>
           </div>
           <div className="flex justify-end space-x-3 pt-6 border-t font-semibold">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button>

@@ -126,8 +126,8 @@ export default function UsersPage() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight">Team Members</h1>
-          <p className="text-slate-500 font-medium">Manage your organization's workforce and permissions.</p>
+          <h1 className="text-4xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>Team Members</h1>
+          <p className="font-medium" style={{ color: 'var(--text-muted)' }}>Manage your organization's workforce and permissions.</p>
         </div>
         <Button onClick={() => handleOpenModal()} className="h-14 px-8 py-0">
           <UserPlus className="mr-2 h-5 w-5" />
@@ -139,28 +139,28 @@ export default function UsersPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="modern-card p-6 flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Members</p>
-            <p className="text-3xl font-black text-slate-900">{totalUsers}</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>Total Members</p>
+            <p className="text-3xl font-black" style={{ color: 'var(--text-primary)' }}>{totalUsers}</p>
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+          <div className="h-12 w-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)' }}>
             <Users size={24} />
           </div>
         </div>
         <div className="modern-card p-6 flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Departments</p>
-            <p className="text-3xl font-black text-slate-900">{departments.length}</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>Departments</p>
+            <p className="text-3xl font-black" style={{ color: 'var(--text-primary)' }}>{departments.length}</p>
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600">
+          <div className="h-12 w-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(244, 63, 94, 0.1)', color: 'rgb(244, 63, 94)' }}>
             <Briefcase size={24} />
           </div>
         </div>
         <div className="modern-card p-6 flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Admin Roles</p>
-            <p className="text-3xl font-black text-slate-900">{users.filter(u => u.role.includes('admin')).length}</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>Admin Roles</p>
+            <p className="text-3xl font-black" style={{ color: 'var(--text-primary)' }}>{users.filter(u => u.role.includes('admin')).length}</p>
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+          <div className="h-12 w-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', color: 'rgb(245, 158, 11)' }}>
             <Shield size={24} />
           </div>
         </div>
@@ -168,24 +168,50 @@ export default function UsersPage() {
 
       {/* Filters & Table Section */}
       <div className="modern-card overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row gap-4 bg-slate-50/30">
+        <div className="p-6 border-b flex flex-col md:flex-row gap-4" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-secondary)' }}>
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: 'var(--text-muted)' }} />
             <input
               type="text"
               placeholder="Search by name or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600/30 transition-all font-medium text-sm"
+              className="w-full pl-12 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2 transition-all font-medium text-sm"
+              style={{
+                backgroundColor: 'var(--input-bg)',
+                borderColor: 'var(--input-border)',
+                color: 'var(--input-text)'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'var(--input-focus-border)';
+                e.target.style.boxShadow = '0 0 0 2px var(--input-focus-ring)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--input-border)';
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
           <div className="flex gap-4">
             <div className="relative min-w-[160px]">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: 'var(--text-muted)' }} />
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full pl-12 pr-8 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-600/10 appearance-none font-medium text-sm"
+                className="w-full pl-12 pr-8 py-3 rounded-2xl focus:outline-none focus:ring-2 appearance-none font-medium text-sm"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
+                  borderColor: 'var(--input-border)',
+                  color: 'var(--input-text)'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'var(--input-focus-border)';
+                  e.target.style.boxShadow = '0 0 0 2px var(--input-focus-ring)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'var(--input-border)';
+                  e.target.style.boxShadow = 'none';
+                }}
               >
                 <option value="all">All Roles</option>
                 <option value="org_admin">Admins</option>
@@ -198,26 +224,34 @@ export default function UsersPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left" style={{ borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Member</th>
-                <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Role & Department</th>
-                <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Designation</th>
-                <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-right">Actions</th>
+              <tr style={{ background: 'var(--surface-secondary)' }}>
+                <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>Member</th>
+                <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>Role & Department</th>
+                <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>Designation</th>
+                <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-right" style={{ color: 'var(--text-muted)' }}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user._id} className="group hover:bg-slate-50/50 transition-colors">
+                <tr 
+                  key={user._id} 
+                  className="group transition-colors"
+                  style={{ 
+                    borderBottom: `1px solid var(--border)`,
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform duration-300">
+                      <div className="h-12 w-12 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: 'var(--primary)' }}>
                         {user.name.charAt(0)}
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-slate-900 leading-tight">{user.name}</div>
-                        <div className="text-xs font-medium text-slate-400 flex items-center gap-1.5 pt-1">
+                        <div className="text-sm font-bold leading-tight" style={{ color: 'var(--text-primary)' }}>{user.name}</div>
+                        <div className="text-xs font-medium flex items-center gap-1.5 pt-1" style={{ color: 'var(--text-muted)' }}>
                           <Mail size={12} />
                           {user.email}
                         </div>
@@ -229,26 +263,50 @@ export default function UsersPage() {
                       <Badge variant={user.role === 'org_admin' ? 'approved' : user.role === 'employee' ? 'default' : 'pending'}>
                         {user.role.replace('_', ' ')}
                       </Badge>
-                      <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5 ml-1">
+                      <span className="text-xs font-bold flex items-center gap-1.5 ml-1" style={{ color: 'var(--text-muted)' }}>
                         <Briefcase size={12} />
                         {user.departmentId?.name || user.department || 'General'}
                       </span>
                     </div>
                   </td>
                   <td className="px-8 py-6">
-                    <span className="text-sm font-bold text-slate-600">{user.designation || '-'}</span>
+                    <span className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>{user.designation || '-'}</span>
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex justify-end gap-2 pr-2">
                       <button 
                         onClick={() => handleOpenModal(user)}
-                        className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                        className="p-2.5 rounded-xl transition-all"
+                        style={{ 
+                          color: 'var(--text-muted)',
+                          backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--primary-light)';
+                          e.currentTarget.style.color = 'var(--primary)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--text-muted)';
+                        }}
                       >
                         <Edit2 size={16} />
                       </button>
                       <button 
                         onClick={() => handleDelete(user._id)}
-                        className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                        className="p-2.5 rounded-xl transition-all"
+                        style={{ 
+                          color: 'var(--text-muted)',
+                          backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                          e.currentTarget.style.color = '#ef4444';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--text-muted)';
+                        }}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -260,10 +318,10 @@ export default function UsersPage() {
           </table>
           {filteredUsers.length === 0 && (
             <div className="py-20 text-center space-y-3">
-              <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl" style={{ backgroundColor: 'var(--surface-secondary)', color: 'var(--text-muted)' }}>
                 <Search size={32} />
               </div>
-              <p className="text-slate-500 font-bold">No members found matching your criteria.</p>
+              <p className="font-bold" style={{ color: 'var(--text-muted)' }}>No members found matching your criteria.</p>
             </div>
           )}
         </div>

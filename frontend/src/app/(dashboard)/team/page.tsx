@@ -32,7 +32,7 @@ export default function TeamPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+      <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
         {isAdminView ? 'Organization Overview' : 'Team Overview'}
       </h1>
 
@@ -95,23 +95,29 @@ export default function TeamPage() {
       )}
 
       {/* Team Members on Leave Today */}
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">On Leave Today</h3>
+      <div className="modern-card rounded-lg mb-6">
+        <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
+          <h3 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>On Leave Today</h3>
         </div>
         <div className="p-6">
           {data?.onLeaveToday && data.onLeaveToday.length > 0 ? (
-            <ul className="divide-y divide-gray-200">
+            <ul style={{ borderBottom: `1px solid var(--border)` }}>
               {data.onLeaveToday.map((member: any, index: number) => (
-                <li key={index} className="py-3">
+                <li 
+                  key={index} 
+                  className="py-3"
+                  style={{ 
+                    borderBottom: index !== data.onLeaveToday.length - 1 ? `1px solid var(--border)` : 'none'
+                  }}
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{member.employee?.name || 'N/A'}</p>
-                      <p className="text-sm text-gray-500">{member.leaveType?.name || 'N/A'}</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{member.employee?.name || 'N/A'}</p>
+                      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{member.leaveType?.name || 'N/A'}</p>
                     </div>
                     <div className="text-right">
                       <Badge variant="approved">{member.totalDays} days</Badge>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                         {new Date(member.fromDate).toLocaleDateString()} - {new Date(member.toDate).toLocaleDateString()}
                       </p>
                     </div>
@@ -120,29 +126,33 @@ export default function TeamPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-gray-500 text-center py-4">No team members on leave today</p>
+            <p className="text-center py-4" style={{ color: 'var(--text-muted)' }}>No team members on leave today</p>
           )}
         </div>
       </div>
 
       {/* Pending Approvals */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Pending Approvals</h3>
+      <div className="modern-card rounded-lg">
+        <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
+          <h3 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Pending Approvals</h3>
         </div>
         <div className="p-6">
           {data?.pendingApprovals && data.pendingApprovals.length > 0 ? (
             <div className="space-y-4">
               {data.pendingApprovals.map((approval: any) => (
-                <div key={approval._id || approval.id} className="border rounded-lg p-4">
+                <div 
+                  key={approval._id || approval.id} 
+                  className="border rounded-lg p-4"
+                  style={{ borderColor: 'var(--border)' }}
+                >
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h4 className="font-medium text-gray-900">{approval.employee?.name || 'N/A'}</h4>
-                      <p className="text-sm text-gray-500">{approval.leaveType?.name || 'N/A'}</p>
+                      <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>{approval.employee?.name || 'N/A'}</h4>
+                      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{approval.leaveType?.name || 'N/A'}</p>
                     </div>
                     <Badge variant="pending">Pending</Badge>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                  <div className="grid grid-cols-2 gap-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
                     <div>
                       <span className="font-medium">Dates:</span>{' '}
                       {new Date(approval.fromDate).toLocaleDateString()} - {new Date(approval.toDate).toLocaleDateString()}
@@ -161,7 +171,7 @@ export default function TeamPage() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-4">No pending approvals</p>
+            <p className="text-center py-4" style={{ color: 'var(--text-muted)' }}>No pending approvals</p>
           )}
         </div>
       </div>
@@ -172,18 +182,18 @@ export default function TeamPage() {
 function StatCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   const colorSchemes: Record<string, { bg: string; iconBg: string; text: string }> = {
     blue: { 
-      bg: 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100', 
-      iconBg: 'bg-blue-600 shadow-blue-200',
+      bg: 'modern-card', 
+      iconBg: 'bg-blue-600',
       text: 'text-blue-900'
     },
     yellow: { 
-      bg: 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-100', 
-      iconBg: 'bg-yellow-600 shadow-yellow-200',
+      bg: 'modern-card', 
+      iconBg: 'bg-yellow-600',
       text: 'text-yellow-900'
     },
     purple: { 
-      bg: 'bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-100', 
-      iconBg: 'bg-purple-600 shadow-purple-200',
+      bg: 'modern-card', 
+      iconBg: 'bg-purple-600',
       text: 'text-purple-900'
     },
   };
@@ -193,8 +203,8 @@ function StatCard({ title, value, icon, color }: { title: string; value: number;
   return (
     <div className={`p-6 rounded-2xl border flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-300 ${scheme.bg}`}>
       <div>
-        <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">{title}</p>
-        <h3 className={`text-3xl font-black ${scheme.text}`}>{value}</h3>
+        <p className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>{title}</p>
+        <h3 className="text-3xl font-black" style={{ color: 'var(--text-primary)' }}>{value}</h3>
       </div>
       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transform rotate-3 ${scheme.iconBg}`}>
         {icon}

@@ -97,9 +97,9 @@ export default function ApplyLeavePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Apply for Leave</h1>
+      <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Apply for Leave</h1>
       
-      <div className="max-w-2xl bg-white rounded-lg shadow p-6">
+      <div className="max-w-2xl modern-card rounded-lg p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <Select
             label="Leave Type"
@@ -132,15 +132,20 @@ export default function ApplyLeavePage() {
           </div>
 
           {totalDays > 0 && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
+            <div className="rounded-lg p-4" style={{ 
+              backgroundColor: 'var(--primary-light)', 
+              borderColor: 'var(--primary-lighter)',
+              borderWidth: '1px',
+              borderStyle: 'solid'
+            }}>
+              <p className="text-sm" style={{ color: 'var(--primary-text)' }}>
                 <span className="font-semibold">Total working days:</span> {totalDays}
               </p>
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
               Reason
             </label>
             <textarea
@@ -149,7 +154,22 @@ export default function ApplyLeavePage() {
               onChange={handleChange}
               required
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-all"
+              style={{
+                backgroundColor: 'var(--input-bg)',
+                borderColor: 'var(--input-border)',
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                color: 'var(--input-text)'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'var(--input-focus-border)';
+                e.target.style.boxShadow = '0 0 0 2px var(--input-focus-ring)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--input-border)';
+                e.target.style.boxShadow = 'none';
+              }}
               placeholder="Enter reason for leave..."
             />
           </div>
