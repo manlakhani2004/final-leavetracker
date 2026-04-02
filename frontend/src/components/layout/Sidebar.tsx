@@ -17,6 +17,7 @@ import {
   ChevronRight,
   UserCircle,
   Building2,
+  BarChart3,
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -36,6 +37,7 @@ const navigation: NavigationItem[] = [
   { name: 'Users', href: '/users', icon: Users, roles: ['org_admin', 'hr_manager'] },
   { name: 'Leave Types', href: '/leave-types', icon: FileText, roles: ['org_admin', 'hr_manager'] },
   { name: 'Holidays', href: '/holidays', icon: Clock, roles: ['org_admin', 'hr_manager', 'manager'] },
+  { name: 'Reports', href: '/reports', icon: BarChart3, roles: ['all'] },
   { name: 'Profile', href: '/profile', icon: UserCircle, roles: ['all'] },
   { name: 'Settings', href: '/settings', icon: Settings, roles: ['all'] },
 ];

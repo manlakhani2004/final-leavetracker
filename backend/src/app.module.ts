@@ -10,6 +10,7 @@ import { LeaveApplicationModule } from './modules/leave-application/leave-applic
 import { HolidayModule } from './modules/holiday/holiday.module';
 import { DepartmentModule } from './modules/department/department.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { ReportsModule } from './modules/reports/reports.module';
 import { MailModule } from './mail/mail.module';
 
 @Module({
@@ -33,6 +34,7 @@ import { MailModule } from './mail/mail.module';
     HolidayModule,
     DepartmentModule,
     DashboardModule,
+    ReportsModule,
     MailModule,
   ],
 })

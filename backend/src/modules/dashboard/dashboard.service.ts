@@ -329,7 +329,7 @@ export class DashboardService {
     const deptStats = await this.userModel.aggregate([
       {
         $match: {
-          organizationId: organizationId,  // Use string instead of ObjectId
+          organizationId: new Types.ObjectId(organizationId),  // Users store organizationId as ObjectId
           isActive: true,
         },
       },
