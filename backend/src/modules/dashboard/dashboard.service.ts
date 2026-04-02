@@ -198,27 +198,34 @@ export class DashboardService {
 
   async getOrgSummary(organizationId: string) {
     const currentYear = new Date().getFullYear();
+    const orgObjectId = new Types.ObjectId(organizationId);
 
-    // Total employees
+    // Total employees (users store organizationId as ObjectId)
     const totalEmployees = await this.userModel.countDocuments({
-      organizationId,
+      organizationId: orgObjectId,
       isActive: true,
     });
 
-    // Leave applications by status
+    // Leave types count
+    const leaveTypesCount = await this.leaveTypeModel.countDocuments({
+      organizationId: organizationId,  // Leave types store organizationId as string
+      isActive: true,
+    });
+
+    // Leave applications by status (leave applications store organizationId as string)
     const pendingCount = await this.leaveAppModel.countDocuments({
-      organizationId,
+      organizationId: organizationId,
       status: 'pending',
     });
 
     const approvedCount = await this.leaveAppModel.countDocuments({
-      organizationId,
+      organizationId: organizationId,
       status: 'approved',
       fromDate: { $gte: new Date(currentYear, 0, 1) },
     });
 
     const rejectedCount = await this.leaveAppModel.countDocuments({
-      organizationId,
+      organizationId: organizationId,
       status: 'rejected',
       fromDate: { $gte: new Date(currentYear, 0, 1) },
     });
@@ -226,16 +233,19 @@ export class DashboardService {
     // Employees on leave today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     const onLeaveToday = await this.leaveAppModel.find({
-      organizationId,
+      organizationId: organizationId,
       status: 'approved',
-      fromDate: { $lte: today },
-      toDate: { $gte: today },
+      fromDate: { $lt: tomorrow },  // Leave starts before tomorrow
+      toDate: { $gte: today },     // Leave ends after or at today
     }).populate('userId', 'name email');
 
     // Recent leave applications
-    const recentApplications = await this.leaveAppModel.find({ organizationId })
+    const recentApplications = await this.leaveAppModel.find({ organizationId: organizationId })
       .populate('userId', 'name email department')
       .populate('leaveTypeId', 'name')
       .sort({ createdAt: -1 })
@@ -243,6 +253,7 @@ export class DashboardService {
 
     return {
       totalEmployees,
+      leaveTypes: leaveTypesCount,
       leaveStats: {
         pending: pendingCount,
         approved: approvedCount,

@@ -51,7 +51,7 @@ export default function UsersPage() {
     try {
       const data = await userService.getUsers(1, 100) as any;
       setUsers(data.data || []);
-      setTotalUsers(data.pagination?.total || 0);
+      setTotalUsers(data.meta?.total || 0);
     } catch (error) {
       console.error('Failed to load users:', error);
     } finally {
@@ -96,12 +96,12 @@ export default function UsersPage() {
           departmentId: formData.departmentId,
           designation: formData.designation,
         };
-        
+
         // Only include password if it's not empty (user wants to change password)
         if (formData.password && formData.password.trim() !== '') {
           updatePayload.password = formData.password;
         }
-        
+
         await userService.updateUser(editingUser?._id || editingUser?.id, updatePayload);
         toast.success('User updated successfully');
       } else {
@@ -122,7 +122,7 @@ export default function UsersPage() {
 
   const confirmDelete = async () => {
     if (!userToDelete) return;
-    
+
     setIsDeleting(true);
     try {
       await userService.deleteUser(userToDelete._id);
@@ -138,8 +138,8 @@ export default function UsersPage() {
   };
 
   const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -264,10 +264,10 @@ export default function UsersPage() {
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr 
-                  key={user._id} 
+                <tr
+                  key={user._id}
                   className="group transition-colors"
-                  style={{ 
+                  style={{
                     borderBottom: `1px solid var(--border)`,
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
@@ -303,10 +303,10 @@ export default function UsersPage() {
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex justify-end gap-2 pr-2">
-                      <button 
+                      <button
                         onClick={() => handleOpenModal(user)}
                         className="p-2.5 rounded-xl transition-all"
-                        style={{ 
+                        style={{
                           color: 'var(--text-muted)',
                           backgroundColor: 'transparent'
                         }}
@@ -321,10 +321,10 @@ export default function UsersPage() {
                       >
                         <Edit2 size={16} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDelete(user)}
                         className="p-2.5 rounded-xl transition-all"
-                        style={{ 
+                        style={{
                           color: 'var(--text-muted)',
                           backgroundColor: 'transparent'
                         }}
@@ -357,24 +357,24 @@ export default function UsersPage() {
       </div>
 
       {/* Modern Modal Wrapper */}
-      <Modal 
-        isOpen={modalOpen} 
-        onClose={() => setModalOpen(false)} 
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
         title={editingUser ? 'Update Profile' : 'New Member Registration'}
       >
         <form onSubmit={handleSubmit} className="space-y-5 px-2 py-4">
-          <Input label="Full Name" name="name" value={formData.name} onChange={(e: any) => setFormData({...formData, name: e.target.value})} required placeholder="John Doe" />
-          <Input label="Email Address" name="email" type="email" value={formData.email} onChange={(e: any) => setFormData({...formData, email: e.target.value})} required placeholder="john@example.com" />
-          
+          <Input label="Full Name" name="name" value={formData.name} onChange={(e: any) => setFormData({ ...formData, name: e.target.value })} required placeholder="John Doe" />
+          <Input label="Email Address" name="email" type="email" value={formData.email} onChange={(e: any) => setFormData({ ...formData, email: e.target.value })} required placeholder="john@example.com" />
+
           {!editingUser && (
-            <Input label="Access Password" name="password" type="password" value={formData.password} onChange={(e: any) => setFormData({...formData, password: e.target.value})} required minLength={6} placeholder="••••••••" />
+            <Input label="Access Password" name="password" type="password" value={formData.password} onChange={(e: any) => setFormData({ ...formData, password: e.target.value })} required minLength={6} placeholder="••••••••" />
           )}
-          
+
           <div className="grid grid-cols-2 gap-4">
             <Select
               label="System Role"
               value={formData.role}
-              onChange={(e: any) => setFormData({...formData, role: e.target.value})}
+              onChange={(e: any) => setFormData({ ...formData, role: e.target.value })}
               name="role"
               options={[
                 { value: 'employee', label: 'Employee' },
@@ -387,16 +387,16 @@ export default function UsersPage() {
               label="Section/Dept"
               name="departmentId"
               value={formData.departmentId}
-              onChange={(e: any) => setFormData({...formData, departmentId: e.target.value})}
+              onChange={(e: any) => setFormData({ ...formData, departmentId: e.target.value })}
               options={[
                 { value: '', label: 'General' },
                 ...departments.map((d) => ({ value: d._id, label: d.name }))
               ]}
             />
           </div>
-          
-          <Input label="Position / Designation" name="designation" value={formData.designation} onChange={(e: any) => setFormData({...formData, designation: e.target.value})} placeholder="Software Engineer" />
-          
+
+          <Input label="Position / Designation" name="designation" value={formData.designation} onChange={(e: any) => setFormData({ ...formData, designation: e.target.value })} placeholder="Software Engineer" />
+
           <div className="flex gap-4 mt-8">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)} className="flex-1">Discard</Button>
             <Button type="submit" className="flex-1">{editingUser ? 'Save Changes' : 'Register Member'}</Button>
