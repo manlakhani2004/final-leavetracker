@@ -248,6 +248,28 @@ export const dashboardService = {
   },
 };
 
+export const reportService = {
+  getMyBalanceReport: async (year?: number) => {
+    const response = await api.get<ApiResponse<any>>('/reports/my-balance', { params: { year } });
+    return response.data.data;
+  },
+
+  getMyHistoryReport: async (params?: { year?: number; status?: string; leaveTypeId?: string; page?: number; limit?: number }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/my-history', { params });
+    return response.data.data;
+  },
+
+  getOrgSummaryReport: async (params?: { year?: number; startDate?: string; endDate?: string }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/org-summary', { params });
+    return response.data.data;
+  },
+
+  getTeamSummaryReport: async (params?: { year?: number }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/team-summary', { params });
+    return response.data.data;
+  },
+};
+
 export const organizationService = {
   getOrganizations: async (page = 1, limit = 10) => {
     const response = await api.get<ApiResponse<any[]>>('/organizations', { params: { page, limit } });
