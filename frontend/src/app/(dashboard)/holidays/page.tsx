@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import DeleteModal from '@/components/ui/DeleteModal';
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/utils';
 import { Calendar, Trash2, Plus, Sparkles, Pencil } from 'lucide-react';
@@ -16,6 +17,9 @@ export default function HolidaysPage() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [holidayToDelete, setHolidayToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     date: '',
@@ -74,14 +78,25 @@ export default function HolidaysPage() {
     setModalOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this holiday?')) return;
+  const handleDelete = (holiday: any) => {
+    setHolidayToDelete(holiday);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!holidayToDelete) return;
+    
+    setIsDeleting(true);
     try {
-      await holidayService.deleteHoliday(id);
+      await holidayService.deleteHoliday(holidayToDelete._id || holidayToDelete.id);
       toast.success('Holiday deleted');
       loadHolidays();
+      setDeleteModalOpen(false);
+      setHolidayToDelete(null);
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to delete');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -231,7 +246,7 @@ export default function HolidaysPage() {
                         <Pencil className="w-5 h-5" />
                       </button>
                       <button 
-                        onClick={() => handleDelete(holiday._id || holiday.id)}
+                        onClick={() => handleDelete(holiday)}
                         className="p-2 rounded-lg transition-all"
                         style={{ 
                           color: 'var(--text-muted)',
@@ -289,6 +304,19 @@ export default function HolidaysPage() {
           </div>
         </form>
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setHolidayToDelete(null);
+        }}
+        itemName={holidayToDelete?.name || 'this holiday'}
+        itemType="holiday"
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

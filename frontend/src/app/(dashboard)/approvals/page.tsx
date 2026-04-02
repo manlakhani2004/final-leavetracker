@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
+import ApproveModal from '@/components/ui/ApproveModal';
 import toast from 'react-hot-toast';
 
 export default function ApprovalsPage() {
@@ -13,7 +14,9 @@ export default function ApprovalsPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending');
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<string | null>(null);
+  const [applicationToApprove, setApplicationToApprove] = useState<any>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -34,16 +37,23 @@ export default function ApprovalsPage() {
     }
   };
 
-  const handleApprove = async (id: string) => {
-    if (!confirm('Are you sure you want to approve this leave?')) return;
+  const handleApprove = (application: any) => {
+    setApplicationToApprove(application);
+    setApproveModalOpen(true);
+  };
 
+  const confirmApprove = async () => {
+    if (!applicationToApprove) return;
+    
     setActionLoading(true);
     try {
-      await leaveApplicationService.approveLeave(id);
-      toast.success('Leave approved successfully!');
+      await leaveApplicationService.approveLeave(applicationToApprove._id || applicationToApprove.id);
+      toast.success('Leave request accepted successfully!');
       loadApplications();
+      setApproveModalOpen(false);
+      setApplicationToApprove(null);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to approve leave');
+      toast.error(error.response?.data?.message || 'Failed to accept leave request');
     } finally {
       setActionLoading(false);
     }
@@ -212,7 +222,7 @@ export default function ApprovalsPage() {
                       <Button
                         size="sm"
                         variant="success"
-                        onClick={() => handleApprove(app._id || app.id)}
+                        onClick={() => handleApprove(app)}
                         isLoading={actionLoading}
                         className="mr-2"
                       >
@@ -260,6 +270,19 @@ export default function ApprovalsPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Approve Confirmation Modal */}
+      <ApproveModal
+        isOpen={approveModalOpen}
+        onClose={() => {
+          setApproveModalOpen(false);
+          setApplicationToApprove(null);
+        }}
+        itemName={applicationToApprove?.reason || 'this leave request'}
+        itemType="leave request"
+        onConfirm={confirmApprove}
+        isApproving={actionLoading}
+      />
     </div>
   );
 }
