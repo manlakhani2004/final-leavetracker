@@ -215,7 +215,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <QuickActionCard icon="🏢" title="Workforce Control" description="Manage access & roles" href="/users" />
             <QuickActionCard icon="📋" title="Leave Policies" description="Edit entitlements" href="/leave-types" />
-            <QuickActionCard icon="✅" title="Process Stack" description={`${orgStats?.pendingApprovals || 0} items waiting`} href="/approvals" badge={orgStats?.pendingApprovals} />
+            <QuickActionCard icon="✅" title="Process Stack" description={`${orgStats?.leaveStats.pending || 0} items waiting`} href="/approvals" badge={orgStats?.leaveStats.pending} />
             <QuickActionCard icon="📅" title="Event Calendar" description="Company holidays" href="/holidays" />
           </div>
         </div>

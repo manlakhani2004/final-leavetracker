@@ -26,13 +26,13 @@ const colorStyles = {
   purple: { bg: 'bg-purple-50', text: 'text-purple-600', shadow: 'shadow-purple-100', iconBg: 'bg-purple-100/50', accent: 'bg-purple-600' },
 };
 
-export function StatCard({ 
-  icon, 
-  title, 
-  value, 
-  subtitle, 
-  color, 
-  trend 
+export function StatCard({
+  icon,
+  title,
+  value,
+  subtitle,
+  color,
+  trend
 }: StatCardProps) {
   const styles = colorStyles[color] || colorStyles.indigo;
 
@@ -52,22 +52,22 @@ export function StatCard({
           </div>
         )}
       </div>
-      
+
       <div className="space-y-1">
-        <p 
+        <p
           className="text-4xl font-black tracking-tight"
           style={{ color: 'var(--text-primary)' }}
         >
           {typeof value === 'number' ? value.toLocaleString() : value}
         </p>
-        <p 
+        <p
           className="text-sm font-bold uppercase tracking-widest"
           style={{ color: 'var(--text-muted)' }}
         >
           {title}
         </p>
         {subtitle && (
-          <p 
+          <p
             className="text-xs font-semibold pt-2 flex items-center gap-2"
             style={{ color: 'var(--text-secondary)' }}
           >
@@ -89,37 +89,37 @@ interface QuickActionCardProps {
   badge?: number;
 }
 
-export function QuickActionCard({ 
-  icon, 
-  title, 
-  description, 
-  href, 
-  color, 
+export function QuickActionCard({
+  icon,
+  title,
+  description,
+  href,
+  color,
   badge
 }: QuickActionCardProps) {
   return (
     <Link href={href} className="group">
       <div className="modern-card p-5 h-full relative overflow-hidden transition-all duration-500">
-        <div 
+        <div
           className="absolute -right-6 -top-6 h-24 w-24 rounded-full transition-colors"
           style={{ background: 'var(--surface-secondary)' }}
         />
-        
+
         {badge !== undefined && badge > 0 && (
-          <div className="absolute top-4 right-4 bg-rose-500 text-white text-[10px] font-black rounded-lg px-2 py-1 shadow-lg shadow-rose-200 animate-bounce">
+          <div className="absolute top-4 right-4 bg-rose-500 text-white text-[10px] font-black rounded-lg px-2 py-1 shadow shadow-rose-200 animate-bounce">
             {badge} Action Required
           </div>
         )}
 
         <div className="relative">
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-500 origin-left inline-block">{icon}</div>
-          <h3 
+          <h3
             className="font-black leading-tight mb-1 transition-colors"
             style={{ color: 'var(--text-primary)' }}
           >
             {title}
           </h3>
-          <p 
+          <p
             className="text-xs font-bold uppercase tracking-wider leading-relaxed"
             style={{ color: 'var(--text-muted)' }}
           >
@@ -134,7 +134,7 @@ export function QuickActionCard({
 export function ActivityItem({ icon, title, description, time, color }: any) {
   return (
     <div className="flex items-start gap-5 p-5 rounded-2xl transition-all duration-300 group"
-      style={{ }}
+      style={{}}
       onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-hover)'; }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
     >
@@ -145,19 +145,19 @@ export function ActivityItem({ icon, title, description, time, color }: any) {
         {icon}
       </div>
       <div className="flex-1 min-w-0 pt-0.5">
-        <p 
+        <p
           className="text-sm font-bold transition-colors"
           style={{ color: 'var(--text-primary)' }}
         >
           {title}
         </p>
-        <p 
+        <p
           className="text-xs font-semibold mt-1 leading-relaxed line-clamp-2"
           style={{ color: 'var(--text-secondary)' }}
         >
           {description}
         </p>
-        <p 
+        <p
           className="text-[10px] font-black uppercase tracking-widest mt-3"
           style={{ color: 'var(--text-muted)' }}
         >

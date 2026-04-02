@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================================
-   THEME SYSTEM — CSS Custom Properties
-   All UI components read from these variables.
-   Each theme-* class overrides them on :root.
-   ============================================================ */
 
 :root {
   /* ——— Surface / Background ——— */
