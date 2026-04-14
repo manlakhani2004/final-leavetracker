@@ -268,6 +268,57 @@ export const reportService = {
     const response = await api.get<ApiResponse<any>>('/reports/team-summary', { params });
     return response.data.data;
   },
+
+  getDepartmentWiseReport: async (params?: { year?: number; startDate?: string; endDate?: string; leaveTypeId?: string }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/department-wise', { params });
+    return response.data.data;
+  },
+
+  getMonthlyTrendReport: async (params?: { year?: number; leaveTypeId?: string }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/monthly-trend', { params });
+    return response.data.data;
+  },
+
+  getLeaveBalanceSummaryReport: async (params?: { year?: number; departmentId?: string; leaveTypeId?: string }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/leave-balances', { params });
+    return response.data.data;
+  },
+
+  getTeamHistoryReport: async (params?: { year?: number; status?: string; leaveTypeId?: string; page?: number; limit?: number }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/team-history', { params });
+    return response.data.data;
+  },
+
+  // Phase 3 — Advanced Reports
+  getAbsenteeismReport: async (params?: { year?: number; startDate?: string; endDate?: string; departmentId?: string; leaveTypeId?: string; threshold?: number }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/absenteeism', { params });
+    return response.data.data;
+  },
+
+  getApprovalTurnaroundReport: async (params?: { year?: number; startDate?: string; endDate?: string; status?: string }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/approval-turnaround', { params });
+    return response.data.data;
+  },
+
+  getLeaveTypeUtilizationReport: async (params?: { year?: number }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/leave-utilization', { params });
+    return response.data.data;
+  },
+
+  getMyAnnualSummaryReport: async (params?: { year?: number }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/my-annual-summary', { params });
+    return response.data.data;
+  },
+
+  getEmployeeRegisterReport: async (params?: { year?: number; departmentId?: string; employeeId?: string }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/employee-register', { params });
+    return response.data.data;
+  },
+
+  getTeamCalendarReport: async (params?: { startDate?: string; endDate?: string }) => {
+    const response = await api.get<ApiResponse<any>>('/reports/team-calendar', { params });
+    return response.data.data;
+  },
 };
 
 export const organizationService = {

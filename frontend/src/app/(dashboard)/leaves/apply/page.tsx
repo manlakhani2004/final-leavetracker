@@ -14,6 +14,8 @@ export default function ApplyLeavePage() {
     fromDate: '',
     toDate: '',
     reason: '',
+    duration: 'full_day',
+    halfDayType: 'first_half',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [totalDays, setTotalDays] = useState(0);
@@ -24,14 +26,23 @@ export default function ApplyLeavePage() {
 
   useEffect(() => {
     if (formData.fromDate && formData.toDate) {
-      const from = new Date(formData.fromDate);
-      const to = new Date(formData.toDate);
-      if (from <= to) {
-        const days = calculateWorkingDays(from, to);
-        setTotalDays(days);
+      if (formData.duration === 'half_day') {
+         setTotalDays(0.5);
+         if (formData.toDate !== formData.fromDate) {
+           setFormData(f => ({ ...f, toDate: f.fromDate }));
+         }
+      } else {
+        const from = new Date(formData.fromDate);
+        const to = new Date(formData.toDate);
+        if (from <= to) {
+          const days = calculateWorkingDays(from, to);
+          setTotalDays(days);
+        } else {
+          setTotalDays(0);
+        }
       }
     }
-  }, [formData.fromDate, formData.toDate]);
+  }, [formData.fromDate, formData.toDate, formData.duration]);
 
   const loadLeaveTypes = async () => {
     try {
@@ -72,16 +83,26 @@ export default function ApplyLeavePage() {
 
     setIsLoading(true);
     try {
-      await leaveApplicationService.applyLeave({
+      const payload: any = {
         ...formData,
         fromDate: formData.fromDate,
-        toDate: formData.toDate,
-      });
+        toDate: formData.duration === 'half_day' ? formData.fromDate : formData.toDate,
+      };
+
+      if (formData.duration === 'half_day') {
+        payload.halfDayType = formData.halfDayType;
+      } else {
+        delete payload.halfDayType;
+      }
+
+      await leaveApplicationService.applyLeave(payload);
       toast.success('Leave application submitted successfully!');
       setFormData({
         leaveTypeId: (leaveTypes[0] as any)?._id || leaveTypes[0]?.id || '',
         fromDate: '',
         toDate: '',
+        duration: 'full_day',
+        halfDayType: 'first_half',
         reason: '',
       });
     } catch (error: any) {
@@ -127,20 +148,49 @@ export default function ApplyLeavePage() {
               type="date"
               value={formData.toDate}
               onChange={handleChange}
+              disabled={formData.duration === 'half_day'}
               required
             />
           </div>
 
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Select
+              label="Duration"
+              name="duration"
+              value={formData.duration}
+              onChange={handleChange}
+              options={[
+                { value: 'full_day', label: 'Full Day' },
+                { value: 'half_day', label: 'Half Day' }
+              ]}
+            />
+            {formData.duration === 'half_day' && (
+              <Select
+                label="Half Day Segment"
+                name="halfDayType"
+                value={formData.halfDayType}
+                onChange={handleChange}
+                options={[
+                  { value: 'first_half', label: '1st Half' },
+                  { value: 'second_half', label: '2nd Half' }
+                ]}
+              />
+            )}
+          </div>
+
           {totalDays > 0 && (
-            <div className="rounded-lg p-4" style={{ 
-              backgroundColor: 'var(--primary-light)', 
-              borderColor: 'var(--primary-lighter)',
+            <div className="rounded-lg overflow-hidden" style={{ 
+              backgroundColor: 'var(--surface-secondary)', 
+              borderColor: 'var(--border-light)',
               borderWidth: '1px',
               borderStyle: 'solid'
             }}>
-              <p className="text-sm" style={{ color: 'var(--primary-text)' }}>
-                <span className="font-semibold">Total working days:</span> {totalDays}
-              </p>
+               <div className="px-4 py-3 bg-indigo-50 border-b border-indigo-100 dark:bg-indigo-900/20 dark:border-indigo-800/30">
+                  <p className="text-sm font-semibold flex justify-between items-center" style={{ color: 'var(--text-primary)' }}>
+                    <span>Total {formData.duration === 'half_day' ? 'Half ' : ''}Day(s)</span>
+                    <span className="text-lg text-indigo-600 dark:text-indigo-400">{totalDays} Day(s)</span>
+                  </p>
+               </div>
             </div>
           )}
 

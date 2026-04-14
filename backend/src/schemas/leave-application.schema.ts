@@ -23,6 +23,9 @@ export class LeaveApplication extends Document {
   @Prop({ required: true, min: 0 })
   totalDays: number;
 
+  @Prop({ type: String, enum: ['first_half', 'second_half'] })
+  halfDayType?: 'first_half' | 'second_half';
+
   @Prop({ required: true, trim: true })
   reason: string;
 
