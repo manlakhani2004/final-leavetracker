@@ -111,10 +111,11 @@ export class DashboardService {
 
   async getTeamSummary(userId: string, organizationId: string, role?: string) {
     const isSpecialRole = role === 'org_admin' || role === 'hr_manager';
+    const orgObjectId = new Types.ObjectId(organizationId);
     
     // Check if user is a department head
     const departmentHeadOf = await this.departmentModel.find({
-      organizationId: new Types.ObjectId(organizationId),
+      organizationId: orgObjectId,
       headId: new Types.ObjectId(userId)
     });
 
@@ -127,22 +128,22 @@ export class DashboardService {
     let monitoredMembers: any[] = [];
     
     if (isSpecialRole) {
-      monitoredMembers = await this.userModel.find({ organizationId, isActive: true });
+      monitoredMembers = await this.userModel.find({ organizationId: orgObjectId, isActive: true });
     } else if (isDepartmentHead) {
       const deptIds = departmentHeadOf.map(d => d._id);
       monitoredMembers = await this.userModel.find({
-        organizationId,
+        organizationId: orgObjectId,
         isActive: true,
         $or: [
-          { managerId: userId },
+          { managerId: new Types.ObjectId(userId) },
           { departmentId: { $in: deptIds } }
         ]
       });
     } else {
       monitoredMembers = await this.userModel.find({
-        organizationId,
+        organizationId: orgObjectId,
         isActive: true,
-        managerId: userId
+        managerId: new Types.ObjectId(userId)
       });
     }
 
@@ -155,17 +156,17 @@ export class DashboardService {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const onLeaveToday = await this.leaveAppModel.find({
-      userId: { $in: monitoredMemberIds },
-      organizationId,
+      userId: { $in: monitoredMemberIds.map(id => id.toString()) },  // Convert to string for leave applications
+      organizationId: organizationId,  // Leave applications store organizationId as string
       status: 'approved',
-      fromDate: { $lte: today },
-      toDate: { $gte: today },
+      fromDate: { $lt: tomorrow },  // Leave starts before tomorrow
+      toDate: { $gte: today },     // Leave ends after or at today
     }).populate('userId', 'name email department');
 
     // Get pending approvals for monitored group
     const pendingApprovals = await this.leaveAppModel.find({
-      userId: { $in: monitoredMemberIds },
-      organizationId,
+      userId: { $in: monitoredMemberIds.map(id => id.toString()) },  // Convert to string for leave applications
+      organizationId: organizationId,  // Leave applications store organizationId as string
       status: 'pending',
     })
       .populate('userId', 'name email department')

@@ -310,6 +310,7 @@ export class ReportsService {
   ) {
     const year = query.year || new Date().getFullYear();
     const orgObjectId = new Types.ObjectId(organizationId);
+    const userObjectId = new Types.ObjectId(userId);
 
     // Get team members based on role
     let teamMembers: any[] = [];
@@ -321,18 +322,55 @@ export class ReportsService {
         .populate('departmentId', 'name')
         .select('name email designation departmentId role');
     } else if (role === 'manager') {
-      // Manager sees direct reports
-      teamMembers = await this.userModel
-        .find({ managerId: userId, organizationId: orgObjectId, isActive: true })
+      // Manager sees direct reports and themselves
+      const directReports = await this.userModel
+        .find({ managerId: userObjectId, organizationId: orgObjectId, isActive: true })
         .populate('departmentId', 'name')
         .select('name email designation departmentId role');
+      
+      const managerProfile = await this.userModel.findById(userObjectId)
+        .populate('departmentId', 'name')
+        .select('name email designation departmentId role');
+      
+      teamMembers = [...directReports, managerProfile].filter(Boolean);
     }
 
     const teamMemberIds = teamMembers.map((m) => m._id);
 
-    // Get all leave applications for the team in the given year
+    // Initialize leave balances for all team members
+    const leaveTypes = await this.leaveTypeModel.find({ organizationId: organizationId, isActive: true });
+    
+    for (const member of teamMembers) {
+      for (const type of leaveTypes) {
+        const exists = await this.leaveBalanceModel.findOne({
+          userId: member._id,
+          organizationId: orgObjectId,
+          year,
+          leaveTypeId: type._id,
+        });
+
+        if (!exists) {
+          try {
+            await this.leaveBalanceModel.create({
+              userId: member._id,
+              organizationId: orgObjectId,
+              leaveTypeId: type._id,
+              year,
+              totalAllocated: type.totalDaysAllowed,
+              used: 0,
+              carryForward: 0,
+              remaining: type.totalDaysAllowed,
+            });
+          } catch (error: any) {
+            if (error.code !== 11000) throw error;
+          }
+        }
+      }
+    }
+
+    // Get all leave applications for team in given year
     const teamApplications = await this.leaveAppModel.find({
-      userId: { $in: teamMemberIds },
+      userId: { $in: teamMemberIds.map(id => id.toString()) },  // Convert to string for leave applications
       organizationId: organizationId,
       fromDate: {
         $gte: new Date(year, 0, 1),
@@ -347,15 +385,15 @@ export class ReportsService {
           (a) => a.userId.toString() === member._id.toString(),
         );
 
-        const approved = memberApps.filter((a) => a.status === 'approved');
-        const pending = memberApps.filter((a) => a.status === 'pending');
+        const approved = memberApps.filter((a) => ['hr_approved', 'approved'].includes(a.status));
+        const pending = memberApps.filter((a) => ['pending', 'manager_approved'].includes(a.status));
         const totalDaysTaken = approved.reduce((sum, a) => sum + a.totalDays, 0);
 
         // Get leave balances for this member
         const balances = await this.leaveBalanceModel
           .find({
-            userId: member._id,
-            organizationId,
+            userId: member._id,  // Leave balances store userId as ObjectId
+            organizationId: orgObjectId,  // Leave balances store organizationId as ObjectId
             year,
           })
           .populate('leaveTypeId', 'name');

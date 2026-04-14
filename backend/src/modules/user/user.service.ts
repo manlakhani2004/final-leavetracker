@@ -36,6 +36,20 @@ export class UserService {
       }
     }
 
+    // Auto-assign department manager if role is employee and no manager specified
+    if (createUserDto.role === 'employee' && !createUserDto.managerId && createUserDto.departmentId) {
+      const departmentManager = await this.userModel.findOne({
+        departmentId: new Types.ObjectId(createUserDto.departmentId),
+        role: 'manager',
+        organizationId: new Types.ObjectId(organizationId),
+        isActive: true
+      });
+      
+      if (departmentManager) {
+        createUserDto.managerId = departmentManager._id;
+      }
+    }
+
     const passwordHash = await Utils.hashPassword(createUserDto.password);
     
     const userData: any = {

@@ -106,12 +106,12 @@ export default function DashboardPage() {
       </div>
 
       {/* Admin Central View */}
-      {user?.role === 'org_admin' && (
+      {user?.role === 'org_admin' || user?.role === 'hr_manager' && (
         <div className="space-y-10">
           <div className="flex items-center justify-between pb-6" style={{ borderBottom: `1px solid var(--border-light)` }}>
             <h2 className="text-2xl font-black flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
               <ShieldCheck size={32} style={{ color: 'var(--primary)' }} />
-              Organization Overview
+              {user?.role === 'org_admin' ? 'Organization Overview' : 'HR Dashboard'}
             </h2>
             <Link href="/users" className="group flex items-center gap-2 text-sm font-black uppercase tracking-widest transition-colors" style={{ color: 'var(--primary-text)' }}>
               Manage Workforce <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
