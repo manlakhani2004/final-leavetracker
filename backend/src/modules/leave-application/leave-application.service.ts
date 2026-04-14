@@ -68,12 +68,19 @@ export class LeaveApplicationService {
       const holidayDates = holidays.map((h) => h.date);
 
       // Calculate working days
-      const totalDays = Utils.getWorkingDaysBetweenDates(
+      let totalDays = Utils.getWorkingDaysBetweenDates(
         fromDate,
         toDate,
         workingDays,
         holidayDates,
       );
+
+      if (createLeaveApplicationDto.halfDayType) {
+        if (fromDate.getTime() !== toDate.getTime()) {
+          throw new BadRequestException("Half day leave must be on a single day");
+        }
+        totalDays = 0.5;
+      }
 
       if (totalDays === 0) {
         throw new BadRequestException("No working days in selected period");

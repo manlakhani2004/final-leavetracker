@@ -40,7 +40,6 @@ export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [orgStats, setOrgStats] = useState<any>(null);
   const [chartData, setChartData] = useState<any>(null);
-
   useEffect(() => {
     loadDashboard();
   }, []);
@@ -106,7 +105,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Admin Central View */}
-      {user?.role === 'org_admin' || user?.role === 'hr_manager' && (
+      {(user?.role === 'org_admin' || user?.role === 'hr_manager') && (
         <div className="space-y-10">
           <div className="flex items-center justify-between pb-6" style={{ borderBottom: `1px solid var(--border-light)` }}>
             <h2 className="text-2xl font-black flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>

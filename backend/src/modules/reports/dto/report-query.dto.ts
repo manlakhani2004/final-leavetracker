@@ -36,4 +36,13 @@ export class ReportQueryDto {
   @Type(() => Number)
   @IsNumber()
   limit?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  threshold?: number;
+
+  @IsOptional()
+  @IsString()
+  employeeId?: string;
 }

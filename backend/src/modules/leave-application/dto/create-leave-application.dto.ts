@@ -20,4 +20,8 @@ export class CreateLeaveApplicationDto {
   @IsOptional()
   @IsString()
   attachmentUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  halfDayType?: 'first_half' | 'second_half';
 }
