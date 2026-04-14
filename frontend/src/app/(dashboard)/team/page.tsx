@@ -60,34 +60,50 @@ export default function TeamPage() {
 
       {/* Department Head Info */}
       {data?.isDepartmentHead && (
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 mb-8 text-white shadow-lg overflow-hidden relative">
-          <div className="absolute right-0 top-0 opacity-10 -translate-y-4 translate-x-4">
+        <div className="modern-card rounded-xl p-6 mb-8 shadow-lg overflow-hidden relative border" style={{ 
+          backgroundColor: 'var(--surface)',
+          borderColor: 'var(--border)'
+        }}>
+          <div className="absolute right-0 top-0 opacity-5 -translate-y-4 translate-x-4" style={{ color: 'var(--primary)' }}>
             <Building2 size={180} />
           </div>
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="bg-white/20 backdrop-blur-md p-4 rounded-2xl">
-                <Building2 className="w-8 h-8 text-white" />
+              <div className="p-4 rounded-2xl border" style={{ 
+                backgroundColor: 'var(--primary)',
+                borderColor: 'var(--primary)'
+              }}>
+                <Building2 className="w-8 h-8" style={{ color: 'white' }} />
               </div>
               <div>
-                <h2 className="text-2xl font-black tracking-tight">Department Head Dashboard</h2>
+                <h2 className="text-2xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>Department Head Dashboard</h2>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {data.departmentsManaged.map((dept: any) => (
-                    <span key={dept.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-white/20 text-white border border-white/10 backdrop-blur-sm">
-                      ● {dept.name}
+                    <span key={dept.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium border" style={{
+                      backgroundColor: 'var(--surface-hover)',
+                      color: 'var(--text-primary)',
+                      borderColor: 'var(--border)'
+                    }}>
+                      {dept.name}
                     </span>
                   ))}
                 </div>
               </div>
             </div>
             <div className="flex gap-4">
-                <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/10">
-                   <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1">Managed Staff</p>
-                   <p className="text-2xl font-bold">{data.teamSize}</p>
+                <div className="px-5 py-3 rounded-xl border" style={{
+                  backgroundColor: 'var(--surface-hover)',
+                  borderColor: 'var(--border)'
+                }}>
+                   <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>Managed Staff</p>
+                   <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{data.teamSize}</p>
                 </div>
-                <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/10">
-                   <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1">Active Requests</p>
-                   <p className="text-2xl font-bold">{data.pendingApprovals?.length || 0}</p>
+                <div className="px-5 py-3 rounded-xl border" style={{
+                  backgroundColor: 'var(--surface-hover)',
+                  borderColor: 'var(--border)'
+                }}>
+                   <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>Active Requests</p>
+                   <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{data.pendingApprovals?.length || 0}</p>
                 </div>
             </div>
           </div>
