@@ -7,6 +7,7 @@ import { Topbar } from '@/components/layout/Topbar';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Toaster } from 'react-hot-toast';
+import { AiChatWidget } from '@/components/ui/AiChatWidget';
 
 interface RoleConfig {
   theme: 'admin' | 'hr' | 'manager' | 'employee';
@@ -187,6 +188,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <AuthProvider>
       <RoleBasedLayout>{children}</RoleBasedLayout>
       <Toaster position="top-right" />
+      <AiChatWidget />
     </AuthProvider>
   );
 }
