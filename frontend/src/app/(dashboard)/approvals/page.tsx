@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { leaveApplicationService } from '@/lib/services';
+import { leaveApplicationService, aiService } from '@/lib/services';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
@@ -19,6 +19,22 @@ export default function ApprovalsPage() {
   const [applicationToApprove, setApplicationToApprove] = useState<any>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [aiInsights, setAiInsights] = useState<Record<string, { loading: boolean, data?: any, error?: string }>>({});
+
+  const handleAskAI = async (id: string) => {
+    setAiInsights(prev => ({ ...prev, [id]: { loading: true, error: undefined } }));
+    try {
+      const data = await aiService.recommendApproval(id);
+      setAiInsights(prev => ({ ...prev, [id]: { loading: false, data } }));
+      toast.success('AI recommendation ready');
+    } catch (error: any) {
+      setAiInsights(prev => ({ 
+        ...prev, 
+        [id]: { loading: false, error: error.response?.data?.message || 'Failed to get AI recommendation' } 
+      }));
+      toast.error(error.response?.data?.message || 'Failed to get AI recommendation');
+    }
+  };
 
   useEffect(() => {
     loadApplications();
@@ -180,6 +196,7 @@ export default function ApprovalsPage() {
               </tr>
             ) : (
               applications.map((app) => (
+                <React.Fragment key={app._id || app.id}>
                 <tr 
                   key={app._id || app.id}
                   style={{ 
@@ -218,7 +235,18 @@ export default function ApprovalsPage() {
                     {new Date(app.createdAt).toLocaleDateString()}
                   </td>
                   {activeTab === 'pending' && (
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => handleAskAI(app._id || app.id)}
+                        isLoading={aiInsights[app._id || app.id]?.loading}
+                        className="mr-2 border-primary text-primary hover:bg-primary-light"
+                        title="Get AI Recommendation"
+                        style={{ border: '1px solid var(--primary)', color: 'var(--primary)', background: 'transparent' }}
+                      >
+                        ✨ Ask AI
+                      </Button>
                       <Button
                         size="sm"
                         variant="success"
@@ -239,6 +267,43 @@ export default function ApprovalsPage() {
                     </td>
                   )}
                 </tr>
+                {/* AI Insight Row */}
+                {aiInsights[app._id || app.id] && (
+                  <tr key={`ai-${app._id || app.id}`}>
+                    <td colSpan={8} className="px-6 py-3 bg-surface-secondary">
+                      {aiInsights[app._id || app.id].loading ? (
+                        <div className="flex items-center text-sm text-primary animate-pulse">
+                          <span className="mr-2">✨</span> LeaveBot is evaluating this application...
+                        </div>
+                      ) : aiInsights[app._id || app.id].error ? (
+                        <div className="flex items-center text-sm text-danger">
+                          <span className="mr-2">⚠️</span> {aiInsights[app._id || app.id].error}
+                        </div>
+                      ) : (
+                        <div className="p-3 rounded-lg border border-primary bg-primary-light/10">
+                          <div className="flex items-center justify-between mb-1">
+                             <div className="flex items-center gap-2">
+                                <span className="font-semibold text-primary">✨ AI Recommendation:</span>
+                                <Badge 
+                                  variant={
+                                    aiInsights[app._id || app.id].data?.recommendation === 'approve' ? 'approved' :
+                                    aiInsights[app._id || app.id].data?.recommendation === 'reject' ? 'rejected' : 'pending'
+                                  }
+                                >
+                                  {aiInsights[app._id || app.id].data?.recommendation.toUpperCase()}
+                                </Badge>
+                             </div>
+                             {aiInsights[app._id || app.id].data?.provider && (
+                                <span className="text-xs text-muted">Powered by {aiInsights[app._id || app.id].data?.provider}</span>
+                             )}
+                          </div>
+                          <p className="text-sm text-text-secondary mt-1 ml-6">{aiInsights[app._id || app.id].data?.reason}</p>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
               ))
             )}
           </tbody>
