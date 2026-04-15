@@ -351,10 +351,13 @@ export const aiService = {
     return response.data.data;
   },
 
-  // Chat with the leave assistant
-  chat: async (message: string, context?: string) => {
-    const response = await api.post<ApiResponse<any>>('/ai/chat', { message, context });
-    return response.data.data.reply as string;
+  // Chat with the leave assistant (multi-turn with history for context)
+  chat: async (message: string, history?: { role: string; content: string }[]) => {
+    const response = await api.post<ApiResponse<any>>('/ai/chat', {
+      message,
+      history: history || [],
+    });
+    return response.data.data; // { reply, provider }
   },
 
   // Generate a professional leave reason
@@ -373,5 +376,15 @@ export const aiService = {
   generateInsight: async (reportType: string, data: any) => {
     const response = await api.post<ApiResponse<any>>('/ai/insights', { reportType, data });
     return response.data.data.insight as string;
+  },
+
+  // Recommend approval for a leave application
+  recommendApproval: async (applicationId: string) => {
+    const response = await api.post<ApiResponse<any>>('/ai/recommend-approval', { applicationId });
+    return response.data.data as {
+      recommendation: 'approve' | 'reject' | 'flag';
+      reason: string;
+      provider: 'ollama' | 'gemini';
+    };
   },
 };
