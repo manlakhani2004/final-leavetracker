@@ -342,3 +342,36 @@ export const organizationService = {
     return response.data.data;
   },
 };
+
+// ── AI Service ────────────────────────────────────────────────────────────────
+export const aiService = {
+  // Check which AI providers are online
+  health: async () => {
+    const response = await api.get<ApiResponse<any>>('/ai/health');
+    return response.data.data;
+  },
+
+  // Chat with the leave assistant
+  chat: async (message: string, context?: string) => {
+    const response = await api.post<ApiResponse<any>>('/ai/chat', { message, context });
+    return response.data.data.reply as string;
+  },
+
+  // Generate a professional leave reason
+  generateReason: async (params: {
+    leaveType: string;
+    fromDate: string;
+    toDate: string;
+    employeeName?: string;
+    halfDayType?: string;
+  }) => {
+    const response = await api.post<ApiResponse<any>>('/ai/generate-reason', params);
+    return response.data.data.reason as string;
+  },
+
+  // Generate insight text for a report page
+  generateInsight: async (reportType: string, data: any) => {
+    const response = await api.post<ApiResponse<any>>('/ai/insights', { reportType, data });
+    return response.data.data.insight as string;
+  },
+};
