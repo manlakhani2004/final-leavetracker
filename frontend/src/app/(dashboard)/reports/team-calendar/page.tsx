@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { reportService } from '@/lib/services';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Calendar, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Calendar, AlertTriangle, ChevronLeft, ChevronRight, Users, ClipboardList, CheckCircle } from 'lucide-react';
 
 const STATUS_COLORS: Record<string, string> = {
   approved: '#10b981',
@@ -162,14 +162,14 @@ export default function TeamCalendarReport() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
         {[
-          { label: 'Team Size', value: report?.teamSize || 0, icon: '👥', color: '#6366f1' },
-          { label: 'Total Leave Events', value: summary.totalLeaveEvents || 0, icon: '📋', color: '#06b6d4' },
-          { label: 'Approved', value: summary.approvedEvents || 0, icon: '✅', color: '#10b981' },
-          { label: 'Overlap Days', value: summary.overlapDays || 0, icon: '⚠️', color: '#ef4444' },
+          { label: 'Team Size', value: report?.teamSize || 0, icon: <Users size={28} />, color: '#6366f1' },
+          { label: 'Total Leave Events', value: summary.totalLeaveEvents || 0, icon: <ClipboardList size={28} />, color: '#06b6d4' },
+          { label: 'Approved', value: summary.approvedEvents || 0, icon: <CheckCircle size={28} />, color: '#10b981' },
+          { label: 'Overlap Days', value: summary.overlapDays || 0, icon: <AlertTriangle size={28} />, color: '#ef4444' },
         ].map((card, i) => (
           <div key={i} className="modern-card rounded-2xl p-5 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0 text-2xl" style={{ background: `${card.color}20` }}>
-              {card.icon}
+            <div className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${card.color}20` }}>
+              <div style={{ color: card.color }}>{card.icon}</div>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{card.label}</p>

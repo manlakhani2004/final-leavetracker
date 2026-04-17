@@ -7,7 +7,7 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Users, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Users, ChevronDown, ChevronUp, FileText, CheckCircle, Clock, BarChart3, Palmtree } from 'lucide-react';
 
 export default function TeamSummaryReport() {
   const [report, setReport] = useState<any>(null);
@@ -107,35 +107,35 @@ export default function TeamSummaryReport() {
       {/* Team Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
         <StatCard
-          icon={<span className="text-2xl">👥</span>}
+          icon={<Users size={24} />}
           title="Team Size"
           value={teamStats.teamSize || 0}
           subtitle="Members"
           color="indigo"
         />
         <StatCard
-          icon={<span className="text-2xl">📋</span>}
+          icon={<FileText size={24} />}
           title="Applications"
           value={teamStats.totalApplications || 0}
           subtitle="Total requests"
           color="blue"
         />
         <StatCard
-          icon={<span className="text-2xl">✅</span>}
+          icon={<CheckCircle size={24} />}
           title="Approved"
           value={teamStats.totalApproved || 0}
           subtitle="Accepted"
           color="emerald"
         />
         <StatCard
-          icon={<span className="text-2xl">⏳</span>}
+          icon={<Clock size={24} />}
           title="Pending"
           value={teamStats.totalPending || 0}
           subtitle="Awaiting action"
           color="amber"
         />
         <StatCard
-          icon={<span className="text-2xl">📊</span>}
+          icon={<BarChart3 size={24} />}
           title="Avg / Member"
           value={teamStats.avgDaysPerMember || 0}
           subtitle="Days taken"
@@ -153,7 +153,7 @@ export default function TeamSummaryReport() {
           }}
         >
           <h3 className="font-bold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <span className="text-lg">🏖️</span> On Leave Today ({report.onLeaveToday.length})
+            <span className="flex items-center text-rose-500 mr-2"><Palmtree size={20} /></span> On Leave Today ({report.onLeaveToday.length})
           </h3>
           <div className="flex flex-wrap gap-3">
             {report.onLeaveToday.map((leave: any, index: number) => (
@@ -206,7 +206,9 @@ export default function TeamSummaryReport() {
         <div className="divide-y" style={{ borderColor: 'var(--border)' }}>
           {sortedMembers.length === 0 && (
             <div className="px-6 py-12 text-center" style={{ color: 'var(--text-muted)' }}>
-              <div className="text-4xl mb-2">👥</div>
+              <div className="flex justify-center mb-4 opacity-50">
+                <Users size={48} />
+              </div>
               <p>No team members found</p>
             </div>
           )}

@@ -19,7 +19,8 @@ import {
   BarChart3,
   CalendarCheck,
   TrendingUp,
-  PieChart as PieChartIcon
+  PieChart as PieChartIcon,
+  Sparkles
 } from 'lucide-react';
 import {
   AreaChart,
@@ -79,8 +80,8 @@ export default function DashboardPage() {
 
         <div className="relative z-10 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm text-xl">
-              👋
+            <div className="hidden sm:flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm text-white">
+              <Sparkles size={24} />
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-bold tracking-tight leading-snug">
@@ -212,10 +213,10 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <QuickActionCard icon="🏢" title="Workforce Control" description="Manage access & roles" href="/users" />
-            <QuickActionCard icon="📋" title="Leave Policies" description="Edit entitlements" href="/leave-types" />
-            <QuickActionCard icon="✅" title="Process Stack" description={`${orgStats?.leaveStats.pending || 0} items waiting`} href="/approvals" badge={orgStats?.leaveStats.pending} />
-            <QuickActionCard icon="📅" title="Event Calendar" description="Company holidays" href="/holidays" />
+            <QuickActionCard icon={<Users size={24} />} title="Workforce Control" description="Manage access & roles" href="/users" />
+            <QuickActionCard icon={<Layers size={24} />} title="Leave Policies" description="Edit entitlements" href="/leave-types" />
+            <QuickActionCard icon={<CheckCircle2 size={24} />} title="Process Stack" description={`${orgStats?.leaveStats.pending || 0} items waiting`} href="/approvals" badge={orgStats?.leaveStats.pending} />
+            <QuickActionCard icon={<CalendarDays size={24} />} title="Event Calendar" description="Company holidays" href="/holidays" />
           </div>
         </div>
       )}
@@ -279,8 +280,8 @@ export default function DashboardPage() {
                     {data.upcomingLeaves.map((leave: any) => (
                       <div key={leave._id} className="flex items-center justify-between p-5 rounded-3xl transition-all duration-300 group" style={{ background: 'var(--surface-secondary)', border: `1px solid var(--border-light)` }}>
                         <div className="flex items-center gap-5">
-                          <div className="h-14 w-14 rounded-2xl flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform" style={{ background: 'var(--surface)' }}>
-                            📅
+                          <div className="h-14 w-14 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform" style={{ background: 'var(--surface)' }}>
+                            <CalendarDays size={24} style={{ color: 'var(--primary)' }} />
                           </div>
                           <div>
                             <p className="font-black" style={{ color: 'var(--text-primary)' }}>{leave.leaveType?.name}</p>

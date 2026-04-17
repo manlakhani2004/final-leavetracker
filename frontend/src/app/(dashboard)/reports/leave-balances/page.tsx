@@ -5,7 +5,7 @@ import { reportService, leaveTypeService, departmentService } from '@/lib/servic
 import { Select } from '@/components/ui/Select';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Wallet, AlertTriangle, Search } from 'lucide-react';
+import { ArrowLeft, Wallet, AlertTriangle, Search, Users, AlertCircle, BarChart3 } from 'lucide-react';
 
 export default function LeaveBalanceSummaryReport() {
   const [report, setReport] = useState<any>(null);
@@ -141,17 +141,17 @@ export default function LeaveBalanceSummaryReport() {
       {/* Summary Cards Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
         {[
-          { label: 'Total Employees', value: report?.summary?.totalEmployees || 0, emoji: '👥', color: '#6366f1' },
-          { label: 'Zero Balance', value: report?.summary?.zeroBalanceCount || 0, emoji: '🔴', color: '#ef4444' },
-          { label: '≤ 2 Days Left', value: report?.summary?.lowBalanceCount || 0, emoji: '⚠️', color: '#f59e0b' },
-          { label: 'Avg Utilization', value: `${report?.summary?.avgUtilization || 0}%`, emoji: '📊', color: '#10b981', isText: true },
+          { label: 'Total Employees', value: report?.summary?.totalEmployees || 0, icon: <Users size={28} />, color: '#6366f1' },
+          { label: 'Zero Balance', value: report?.summary?.zeroBalanceCount || 0, icon: <AlertCircle size={28} />, color: '#ef4444' },
+          { label: '≤ 2 Days Left', value: report?.summary?.lowBalanceCount || 0, icon: <AlertTriangle size={28} />, color: '#f59e0b' },
+          { label: 'Avg Utilization', value: `${report?.summary?.avgUtilization || 0}%`, icon: <BarChart3 size={28} />, color: '#10b981', isText: true },
         ].map((card, i) => (
           <div key={i} className="modern-card rounded-2xl p-5 flex items-center gap-4">
             <div
               className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: `${card.color}20` }}
             >
-              <span className="text-2xl">{card.emoji}</span>
+              <div style={{ color: card.color }}>{card.icon}</div>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>

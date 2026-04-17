@@ -5,7 +5,7 @@ import { reportService, leaveTypeService } from '@/lib/services';
 import { Select } from '@/components/ui/Select';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, ClipboardList, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Search, ChevronLeft, ChevronRight, XCircle } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   approved: { label: 'Approved', color: '#10b981', bg: '#10b98120' },
@@ -271,7 +271,7 @@ export default function TeamHistoryReport() {
                           title={app.rejectionReason || app.reason}
                         >
                           {app.rejectionReason
-                            ? <span style={{ color: '#ef4444' }}>❌ {app.rejectionReason}</span>
+                            ? <span style={{ color: '#ef4444' }}><XCircle size={14} className="inline mr-1" /> {app.rejectionReason}</span>
                             : app.reason || '—'}
                         </p>
                       </td>

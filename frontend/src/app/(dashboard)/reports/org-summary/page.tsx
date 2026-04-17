@@ -6,7 +6,7 @@ import { Select } from '@/components/ui/Select';
 import { StatCard } from '@/components/ui/StatCard';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, BarChart3, TrendingUp } from 'lucide-react';
+import { ArrowLeft, BarChart3, TrendingUp, Users, FileText, CalendarDays, CheckCircle, Clock, Trophy, XCircle, Ban } from 'lucide-react';
 
 export default function OrgSummaryReport() {
   const [report, setReport] = useState<any>(null);
@@ -86,21 +86,21 @@ export default function OrgSummaryReport() {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <StatCard
-          icon={<span className="text-2xl">👥</span>}
+          icon={<Users size={24} />}
           title="Total Employees"
           value={overview.totalEmployees || 0}
           subtitle="Active members"
           color="indigo"
         />
         <StatCard
-          icon={<span className="text-2xl">📋</span>}
+          icon={<FileText size={24} />}
           title="Total Applications"
           value={overview.totalApplications || 0}
           subtitle={`${year} submissions`}
           color="blue"
         />
         <StatCard
-          icon={<span className="text-2xl">📅</span>}
+          icon={<CalendarDays size={24} />}
           title="Days Consumed"
           value={overview.totalDaysConsumed || 0}
           subtitle="Approved leave days"
@@ -114,10 +114,10 @@ export default function OrgSummaryReport() {
           className="modern-card rounded-2xl p-5 flex items-center gap-4"
         >
           <div
-            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0"
+            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0 text-white"
             style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
           >
-            <span className="text-xl">📊</span>
+            <BarChart3 size={20} />
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
@@ -134,10 +134,10 @@ export default function OrgSummaryReport() {
           className="modern-card rounded-2xl p-5 flex items-center gap-4"
         >
           <div
-            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0"
+            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0 text-white"
             style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
           >
-            <span className="text-xl">✅</span>
+            <CheckCircle size={20} />
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
@@ -154,10 +154,10 @@ export default function OrgSummaryReport() {
           className="modern-card rounded-2xl p-5 flex items-center gap-4"
         >
           <div
-            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0"
+            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0 text-white"
             style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
           >
-            <span className="text-xl">⏱️</span>
+            <Clock size={20} />
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
@@ -176,10 +176,10 @@ export default function OrgSummaryReport() {
           className="modern-card rounded-2xl p-5 flex items-center gap-4"
         >
           <div
-            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0"
+            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0 text-white"
             style={{ background: 'linear-gradient(135deg, #ec4899, #be185d)' }}
           >
-            <span className="text-xl">🏆</span>
+            <Trophy size={20} />
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
@@ -208,16 +208,16 @@ export default function OrgSummaryReport() {
         <div className="p-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Approved', count: report?.statusBreakdown?.approved || 0, color: '#10b981', emoji: '✅' },
-              { label: 'Pending', count: report?.statusBreakdown?.pending || 0, color: '#f59e0b', emoji: '⏳' },
-              { label: 'Rejected', count: report?.statusBreakdown?.rejected || 0, color: '#ef4444', emoji: '❌' },
-              { label: 'Cancelled', count: report?.statusBreakdown?.cancelled || 0, color: '#6b7280', emoji: '🚫' },
+              { label: 'Approved', count: report?.statusBreakdown?.approved || 0, color: '#10b981', icon: <CheckCircle size={28} /> },
+              { label: 'Pending', count: report?.statusBreakdown?.pending || 0, color: '#f59e0b', icon: <Clock size={28} /> },
+              { label: 'Rejected', count: report?.statusBreakdown?.rejected || 0, color: '#ef4444', icon: <XCircle size={28} /> },
+              { label: 'Cancelled', count: report?.statusBreakdown?.cancelled || 0, color: '#6b7280', icon: <Ban size={28} /> },
             ].map((item, idx) => {
               const total = report?.statusBreakdown?.total || 1;
               const percent = Math.round((item.count / total) * 100);
               return (
                 <div key={idx} className="text-center p-4 rounded-xl" style={{ background: 'var(--surface-secondary)' }}>
-                  <div className="text-2xl mb-2">{item.emoji}</div>
+                  <div className="flex justify-center mb-2" style={{ color: item.color }}>{item.icon}</div>
                   <p className="text-2xl font-bold" style={{ color: item.color }}>{item.count}</p>
                   <p className="text-xs font-semibold uppercase tracking-wider mt-1" style={{ color: 'var(--text-muted)' }}>
                     {item.label}

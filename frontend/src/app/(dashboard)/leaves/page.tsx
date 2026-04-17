@@ -9,6 +9,7 @@ import { StatCard } from '@/components/ui/StatCard';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import { CalendarDays, PlaneTakeoff, Target, Inbox } from 'lucide-react';
 
 export default function LeavesPage() {
   const [leaves, setLeaves] = useState<any[]>([]);
@@ -95,21 +96,21 @@ export default function LeavesPage() {
       {/* Balance Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
-          icon={<span className="text-2xl">📅</span>}
+          icon={<CalendarDays size={24} />}
           title="Total Allocated"
           value={summary?.balances?.totalAllocated || 0}
           subtitle="Annual allowance"
           color="indigo"
         />
         <StatCard
-          icon={<span className="text-2xl">✈️</span>}
+          icon={<PlaneTakeoff size={24} />}
           title="Leaves Taken"
           value={summary?.balances?.totalUsed || 0}
           subtitle="Approved days"
           color="rose"
         />
         <StatCard
-          icon={<span className="text-2xl">🎯</span>}
+          icon={<Target size={24} />}
           title="Remaining"
           value={summary?.balances?.totalRemaining || 0}
           subtitle="Available to use"
@@ -204,7 +205,9 @@ export default function LeavesPage() {
                   {leaves.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-12 text-center" style={{ color: 'var(--text-muted)' }}>
-                        <div className="text-4xl mb-2">📭</div>
+                        <div className="flex justify-center mb-4 opacity-50">
+                          <Inbox size={48} />
+                        </div>
                         <p>No leave applications found</p>
                       </td>
                     </tr>

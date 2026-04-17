@@ -387,4 +387,19 @@ export const aiService = {
       provider: 'ollama' | 'gemini';
     };
   },
+
+  // AI-5: Absenteeism Risk Alerts
+  getAbsenteeismAlerts: async (params?: { riskLevel?: string; department?: string; limit?: number }) => {
+    const response = await api.get<ApiResponse<any>>('/ai/absenteeism-alerts', { params });
+    return response.data.data;
+  },
+
+  runAbsenteeismAnalysis: async () => {
+    const response = await api.post<ApiResponse<any>>('/ai/absenteeism-alerts/run');
+    return response.data.data as {
+      generated: number;
+      periodStart: string;
+      periodEnd: string;
+    };
+  },
 };
