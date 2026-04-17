@@ -5,7 +5,7 @@ import { reportService } from '@/lib/services';
 import { Select } from '@/components/ui/Select';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Star, BarChart3, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Star, BarChart3, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -185,7 +185,7 @@ export default function MyAnnualSummaryReport() {
               </div>
               {lt.carryForwardEligibleNextYear > 0 && (
                 <p className="text-xs mt-1" style={{ color: '#6366f1' }}>
-                  🔄 {lt.carryForwardEligibleNextYear}d eligible to carry forward to next year
+                  <RefreshCw size={14} className="inline mr-1" /> {lt.carryForwardEligibleNextYear}d eligible to carry forward to next year
                 </p>
               )}
             </div>

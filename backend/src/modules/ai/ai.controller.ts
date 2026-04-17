@@ -3,6 +3,7 @@ import {
   Post,
   Get,
   Body,
+  Query,
   UseGuards,
   Request,
   HttpCode,
@@ -116,6 +117,79 @@ export class AiController {
         {
           success: false,
           message: err.message || 'AI recommendation service temporarily unavailable.',
+        },
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  // ─── AI-5: Absenteeism Risk Alerts ───────────────────────────────────────────
+
+  /**
+   * GET /ai/absenteeism-alerts — get latest risk alerts for the org
+   * Accessible by: org_admin, hr_manager
+   */
+  @Get('absenteeism-alerts')
+  async getAbsenteeismAlerts(
+    @Request() req: any,
+    @Query('riskLevel') riskLevel?: string,
+    @Query('department') department?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const { organizationId, role } = req.user;
+
+    if (!['org_admin', 'hr_manager'].includes(role)) {
+      throw new HttpException(
+        { success: false, message: 'Only admins and HR managers can view absenteeism alerts.' },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const alerts = await this.aiService.getAbsenteeismAlerts(
+      organizationId.toString(),
+      {
+        riskLevel: riskLevel || undefined,
+        department: department || undefined,
+        limit: limit ? parseInt(limit, 10) : undefined,
+      },
+    );
+
+    return {
+      success: true,
+      data: alerts,
+    };
+  }
+
+  /**
+   * POST /ai/absenteeism-alerts/run — manually trigger risk analysis
+   * Accessible by: org_admin, hr_manager
+   */
+  @Post('absenteeism-alerts/run')
+  @HttpCode(HttpStatus.OK)
+  async runAbsenteeismAnalysis(@Request() req: any) {
+    const { organizationId, role } = req.user;
+
+    if (!['org_admin', 'hr_manager'].includes(role)) {
+      throw new HttpException(
+        { success: false, message: 'Only admins and HR managers can trigger absenteeism analysis.' },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    try {
+      const result = await this.aiService.runAbsenteeismAnalysis(
+        organizationId.toString(),
+      );
+
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (err: any) {
+      throw new HttpException(
+        {
+          success: false,
+          message: err.message || 'Absenteeism analysis failed.',
         },
         HttpStatus.SERVICE_UNAVAILABLE,
       );

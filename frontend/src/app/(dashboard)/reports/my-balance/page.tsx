@@ -7,7 +7,7 @@ import { Select } from '@/components/ui/Select';
 import { StatCard } from '@/components/ui/StatCard';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, PieChart, Download } from 'lucide-react';
+import { ArrowLeft, PieChart, Download, CalendarDays, PlaneTakeoff, Target, BarChart3, RefreshCw, Inbox } from 'lucide-react';
 
 export default function MyBalanceReport() {
   const [report, setReport] = useState<any>(null);
@@ -87,28 +87,28 @@ export default function MyBalanceReport() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard
-          icon={<span className="text-2xl">📅</span>}
+          icon={<CalendarDays size={24} />}
           title="Total Allocated"
           value={report?.summary?.totalAllocated || 0}
           subtitle="Annual allowance"
           color="indigo"
         />
         <StatCard
-          icon={<span className="text-2xl">✈️</span>}
+          icon={<PlaneTakeoff size={24} />}
           title="Used"
           value={report?.summary?.totalUsed || 0}
           subtitle="Days consumed"
           color="rose"
         />
         <StatCard
-          icon={<span className="text-2xl">🎯</span>}
+          icon={<Target size={24} />}
           title="Remaining"
           value={report?.summary?.totalRemaining || 0}
           subtitle="Available to use"
           color="emerald"
         />
         <StatCard
-          icon={<span className="text-2xl">📊</span>}
+          icon={<BarChart3 size={24} />}
           title="Utilization"
           value={`${report?.summary?.overallUtilization || 0}%`}
           subtitle="Balance used"
@@ -125,7 +125,7 @@ export default function MyBalanceReport() {
             border: '1px solid rgba(99, 102, 241, 0.2)',
           }}
         >
-          <div className="text-2xl">🔄</div>
+          <div className="flex justify-center text-indigo-500 mb-1"><RefreshCw size={24} /></div>
           <div>
             <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>
               Carry Forward: {report.summary.totalCarryForward} days
@@ -165,7 +165,9 @@ export default function MyBalanceReport() {
               {report?.balances?.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center" style={{ color: 'var(--text-muted)' }}>
-                    <div className="text-4xl mb-2">📭</div>
+                    <div className="flex justify-center mb-4 opacity-50">
+                      <Inbox size={48} />
+                    </div>
                     <p>No balance records found for {year}</p>
                   </td>
                 </tr>

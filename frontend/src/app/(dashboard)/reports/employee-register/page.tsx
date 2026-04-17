@@ -5,7 +5,7 @@ import { reportService, leaveTypeService, departmentService } from '@/lib/servic
 import { Select } from '@/components/ui/Select';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, ClipboardList, Building2 } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Building2, Users } from 'lucide-react';
 
 export default function EmployeeRegisterReport() {
   const [report, setReport] = useState<any>(null);
@@ -92,14 +92,14 @@ export default function EmployeeRegisterReport() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
         {[
-          { label: 'Total Employees', value: report?.summary?.totalEmployees || 0, color: '#6366f1', icon: '👥' },
-          { label: 'Leave Types', value: leaveTypes.length, color: '#06b6d4', icon: '📋' },
-          { label: 'Departments', value: deptSummary.length, color: '#10b981', icon: '🏢' },
+          { label: 'Total Employees', value: report?.summary?.totalEmployees || 0, color: '#6366f1', icon: <Users size={28} /> },
+          { label: 'Leave Types', value: leaveTypes.length, color: '#06b6d4', icon: <ClipboardList size={28} /> },
+          { label: 'Departments', value: deptSummary.length, color: '#10b981', icon: <Building2 size={28} /> },
         ].map((card, i) => (
           <div key={i} className="modern-card rounded-2xl p-5 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0 text-2xl"
+            <div className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: `${card.color}20` }}>
-              {card.icon}
+              <div style={{ color: card.color }}>{card.icon}</div>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{card.label}</p>

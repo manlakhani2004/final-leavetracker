@@ -8,7 +8,7 @@ import { Select } from '@/components/ui/Select';
 import { StatCard } from '@/components/ui/StatCard';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Calendar, FileText, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, CheckCircle, XCircle, Clock, Ban, BarChart3, Inbox } from 'lucide-react';
 
 export default function MyHistoryReport() {
   const [report, setReport] = useState<any>(null);
@@ -114,42 +114,42 @@ export default function MyHistoryReport() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <StatCard
-          icon={<span className="text-xl">📋</span>}
+          icon={<FileText size={20} />}
           title="Total"
           value={report?.stats?.totalApplications || 0}
           subtitle="Applications"
           color="indigo"
         />
         <StatCard
-          icon={<span className="text-xl">✅</span>}
+          icon={<CheckCircle size={20} />}
           title="Approved"
           value={report?.stats?.approved || 0}
           subtitle="Accepted"
           color="emerald"
         />
         <StatCard
-          icon={<span className="text-xl">❌</span>}
+          icon={<XCircle size={20} />}
           title="Rejected"
           value={report?.stats?.rejected || 0}
           subtitle="Declined"
           color="rose"
         />
         <StatCard
-          icon={<span className="text-xl">⏳</span>}
+          icon={<Clock size={20} />}
           title="Pending"
           value={report?.stats?.pending || 0}
           subtitle="Awaiting"
           color="amber"
         />
         <StatCard
-          icon={<span className="text-xl">🚫</span>}
+          icon={<Ban size={20} />}
           title="Cancelled"
           value={report?.stats?.cancelled || 0}
           subtitle="Withdrawn"
           color="purple"
         />
         <StatCard
-          icon={<span className="text-xl">📊</span>}
+          icon={<BarChart3 size={20} />}
           title="Days Taken"
           value={report?.stats?.totalDaysTaken || 0}
           subtitle="Approved days"
@@ -270,7 +270,9 @@ export default function MyHistoryReport() {
               {report?.applications?.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center" style={{ color: 'var(--text-muted)' }}>
-                    <div className="text-4xl mb-2">📭</div>
+                    <div className="flex justify-center mb-4 opacity-50">
+                      <Inbox size={48} />
+                    </div>
                     <p>No leave applications found</p>
                   </td>
                 </tr>

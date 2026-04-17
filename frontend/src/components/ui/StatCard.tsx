@@ -81,7 +81,7 @@ export function StatCard({
 }
 
 interface QuickActionCardProps {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   description: string;
   href: string;
@@ -112,7 +112,9 @@ export function QuickActionCard({
         )}
 
         <div className="relative">
-          <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-500 origin-left inline-block">{icon}</div>
+          <div className="mb-4 group-hover:scale-125 transition-transform duration-500 origin-left inline-block" style={{ color: 'var(--primary)' }}>
+            {icon}
+          </div>
           <h3
             className="font-black leading-tight mb-1 transition-colors"
             style={{ color: 'var(--text-primary)' }}

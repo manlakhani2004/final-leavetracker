@@ -5,7 +5,7 @@ import { reportService, leaveTypeService } from '@/lib/services';
 import { Select } from '@/components/ui/Select';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, TrendingUp, BarChart2 } from 'lucide-react';
+import { ArrowLeft, TrendingUp, BarChart2, CalendarDays, FileText, BarChart3, Mountain } from 'lucide-react';
 
 const TYPE_COLORS = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#14b8a6'];
 
@@ -114,17 +114,17 @@ export default function MonthlyTrendReport() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
         {[
-          { label: 'Total Days', value: report?.summary?.totalDays || 0, emoji: '📅', color: '#10b981' },
-          { label: 'Applications', value: report?.summary?.totalApplications || 0, emoji: '📋', color: '#6366f1' },
-          { label: 'Monthly Avg', value: `${report?.summary?.avgDaysPerMonth || 0}d`, emoji: '📊', color: '#06b6d4', isText: true },
-          { label: 'Peak Month', value: report?.peakMonth?.monthFull || 'N/A', emoji: '🏔️', color: '#f59e0b', isText: true },
+          { label: 'Total Days', value: report?.summary?.totalDays || 0, icon: <CalendarDays size={28} />, color: '#10b981' },
+          { label: 'Applications', value: report?.summary?.totalApplications || 0, icon: <FileText size={28} />, color: '#6366f1' },
+          { label: 'Monthly Avg', value: `${report?.summary?.avgDaysPerMonth || 0}d`, icon: <BarChart3 size={28} />, color: '#06b6d4', isText: true },
+          { label: 'Peak Month', value: report?.peakMonth?.monthFull || 'N/A', icon: <Mountain size={28} />, color: '#f59e0b', isText: true },
         ].map((card, i) => (
           <div key={i} className="modern-card rounded-2xl p-5 flex items-center gap-4">
             <div
               className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: `${card.color}20` }}
             >
-              <span className="text-2xl">{card.emoji}</span>
+              <div style={{ color: card.color }}>{card.icon}</div>
             </div>
             <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
