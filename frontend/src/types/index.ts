@@ -77,3 +77,19 @@ export interface Holiday {
   date: string;
   type: 'national' | 'optional';
 }
+
+export interface Notification {
+  _id: string;
+  id?: string;
+  recipientId: string;
+  organizationId: string;
+  type: 'leave_applied' | 'leave_approved' | 'leave_rejected' | 'leave_cancelled' | 'leave_reminder' | 'system';
+  title: string;
+  message: string;
+  leaveApplicationId?: any;
+  actorId?: any;
+  isRead: boolean;
+  readAt?: string;
+  createdAt: string;
+  updatedAt?: string;
+}

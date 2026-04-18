@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type LeaveStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
+export type LeaveStatus = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'manager_approved' | 'hr_approved';
 
 @Schema({ timestamps: true })
 export class LeaveApplication extends Document {
@@ -31,7 +31,7 @@ export class LeaveApplication extends Document {
 
   @Prop({ 
     type: String, 
-    enum: ['pending', 'approved', 'rejected', 'cancelled'],
+    enum: ['pending', 'approved', 'rejected', 'cancelled', 'manager_approved', 'hr_approved'],
     default: 'pending'
   })
   status: LeaveStatus;

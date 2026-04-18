@@ -321,6 +321,34 @@ export const reportService = {
   },
 };
 
+// ── Notification Service ──────────────────────────────────────────────────
+export const notificationService = {
+  getNotifications: async (params?: { filter?: 'all' | 'unread'; page?: number; limit?: number }) => {
+    const response = await api.get<ApiResponse<any[]>>('/notifications', { params });
+    return response.data;
+  },
+
+  getUnreadCount: async () => {
+    const response = await api.get<ApiResponse<{ count: number }>>('/notifications/unread-count');
+    return response.data.data.count;
+  },
+
+  markAsRead: async (id: string) => {
+    const response = await api.patch<ApiResponse<any>>(`/notifications/${id}/read`);
+    return response.data.data;
+  },
+
+  markAllAsRead: async () => {
+    const response = await api.patch<ApiResponse<any>>('/notifications/read-all');
+    return response.data.data;
+  },
+
+  deleteNotification: async (id: string) => {
+    const response = await api.delete<ApiResponse<any>>(`/notifications/${id}`);
+    return response.data.data;
+  },
+};
+
 export const organizationService = {
   getOrganizations: async (page = 1, limit = 10) => {
     const response = await api.get<ApiResponse<any[]>>('/organizations', { params: { page, limit } });

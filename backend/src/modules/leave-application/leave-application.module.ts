@@ -8,6 +8,7 @@ import { LeaveType, LeaveTypeSchema } from '../../schemas/leave-type.schema';
 import { User, UserSchema } from '../../schemas/user.schema';
 import { Organization, OrganizationSchema } from '../../schemas/organization.schema';
 import { Holiday, HolidaySchema } from '../../schemas/holiday.schema';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { Holiday, HolidaySchema } from '../../schemas/holiday.schema';
       { name: Organization.name, schema: OrganizationSchema },
       { name: Holiday.name, schema: HolidaySchema },
     ]),
+    NotificationModule,
   ],
   controllers: [LeaveApplicationController],
   providers: [LeaveApplicationService],

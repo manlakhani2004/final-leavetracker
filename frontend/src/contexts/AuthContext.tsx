@@ -53,7 +53,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data.user);
       toast.success('Login successful!');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed');
       throw error;
     }
   };
