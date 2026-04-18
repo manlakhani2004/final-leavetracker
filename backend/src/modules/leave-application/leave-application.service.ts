@@ -17,6 +17,7 @@ import { Organization } from "../../schemas/organization.schema";
 import { Holiday } from "../../schemas/holiday.schema";
 import { Utils } from "../../common/utils";
 import { CreateLeaveApplicationDto } from "./dto/create-leave-application.dto";
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class LeaveApplicationService {
@@ -29,6 +30,7 @@ export class LeaveApplicationService {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Organization.name) private orgModel: Model<Organization>,
     @InjectModel(Holiday.name) private holidayModel: Model<Holiday>,
+    private notificationService: NotificationService,
   ) {}
 
   async apply(
@@ -165,6 +167,19 @@ export class LeaveApplicationService {
           status: "pending",
         },
       ]);
+
+      // Fire notifications to manager + HR/admin (async, don't block)
+      const applicantUser = await this.userModel.findById(userId);
+      this.notificationService.notifyLeaveApplied({
+        applicantId: userId,
+        applicantName: applicantUser?.name || 'Employee',
+        organizationId,
+        leaveApplicationId: leaveApplication[0]._id.toString(),
+        leaveTypeName: leaveType.name,
+        totalDays,
+        fromDate: fromDate.toISOString().split('T')[0],
+        toDate: toDate.toISOString().split('T')[0],
+      }).catch((err) => console.error('Notification error (apply):', err));
 
       return leaveApplication[0];
     } catch (error) {
@@ -317,6 +332,19 @@ export class LeaveApplicationService {
     application.approvedAt = new Date();
     await application.save();
 
+    // Notify the applicant that their leave was approved
+    const approverUser = await this.userModel.findById(userId);
+    const approvedLeaveType = await this.leaveTypeModel.findById(application.leaveTypeId);
+    this.notificationService.notifyLeaveApproved({
+      applicantId: application.userId.toString(),
+      organizationId,
+      leaveApplicationId: application._id.toString(),
+      leaveTypeName: approvedLeaveType?.name || 'Leave',
+      totalDays: application.totalDays,
+      approverName: approverUser?.name || 'Approver',
+      approverId: userId,
+    }).catch((err) => console.error('Notification error (approve):', err));
+
     return application;
   }
 
@@ -361,6 +389,20 @@ export class LeaveApplicationService {
     application.approvedAt = new Date();
     await application.save();
 
+    // Notify the applicant that their leave was rejected
+    const rejectorUser = await this.userModel.findById(userId);
+    const rejectedLeaveType = await this.leaveTypeModel.findById(application.leaveTypeId);
+    this.notificationService.notifyLeaveRejected({
+      applicantId: application.userId.toString(),
+      organizationId,
+      leaveApplicationId: application._id.toString(),
+      leaveTypeName: rejectedLeaveType?.name || 'Leave',
+      totalDays: application.totalDays,
+      rejectorName: rejectorUser?.name || 'Reviewer',
+      rejectorId: userId,
+      reason: rejectionReason,
+    }).catch((err) => console.error('Notification error (reject):', err));
+
     return application;
   }
 
@@ -400,6 +442,18 @@ export class LeaveApplicationService {
 
     application.status = "cancelled";
     await application.save();
+
+    // Notify manager + HR/admin that the leave was cancelled
+    const cancellingUser = await this.userModel.findById(userId);
+    const cancelledLeaveType = await this.leaveTypeModel.findById(application.leaveTypeId);
+    this.notificationService.notifyLeaveCancelled({
+      applicantId: userId,
+      applicantName: cancellingUser?.name || 'Employee',
+      organizationId,
+      leaveApplicationId: application._id.toString(),
+      leaveTypeName: cancelledLeaveType?.name || 'Leave',
+      totalDays: application.totalDays,
+    }).catch((err) => console.error('Notification error (cancel):', err));
 
     return application;
   }

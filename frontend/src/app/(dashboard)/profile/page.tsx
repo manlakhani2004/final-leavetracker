@@ -109,7 +109,7 @@ export default function ProfilePage() {
               <div className="p-2 rounded-lg" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}><Building className="w-4 h-4" /></div>
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>Department</p>
-                <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{profileData?.department?.name || profileData?.department || 'General'}</p>
+                <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{profileData?.departmentId?.name || profileData?.department?.name || profileData?.department || 'General'}</p>
               </div>
             </div>
           </div>

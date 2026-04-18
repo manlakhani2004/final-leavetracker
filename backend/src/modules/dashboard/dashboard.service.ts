@@ -29,7 +29,7 @@ export class DashboardService {
         userId, 
         organizationId, 
         year: currentYear, 
-        leaveTypeId: type._id
+        leaveTypeId: type._id.toString()
       });
       
       if (!exists) {

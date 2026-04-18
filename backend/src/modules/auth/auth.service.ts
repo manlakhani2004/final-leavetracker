@@ -154,7 +154,9 @@ export class AuthService {
   }
 
   async getProfile(userId: string) {
-    const user = await this.userModel.findById(userId).select('-passwordHash -refreshToken');
+    const user = await this.userModel.findById(userId)
+      .select('-passwordHash -refreshToken')
+      .populate('departmentId');
     
     if (!user) {
       throw new BadRequestException('User not found');

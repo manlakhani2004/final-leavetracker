@@ -135,6 +135,8 @@ export default function ApplyLeavePage() {
       } else {
         delete payload.halfDayType;
       }
+      
+      delete payload.duration;
 
       await leaveApplicationService.applyLeave(payload);
       toast.success('Leave application submitted successfully!');

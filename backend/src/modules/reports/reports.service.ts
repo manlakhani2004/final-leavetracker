@@ -30,7 +30,7 @@ export class ReportsService {
         userId,
         organizationId,
         year,
-        leaveTypeId: type._id,
+        leaveTypeId: type._id.toString(),
       });
 
       if (!exists) {
@@ -499,17 +499,17 @@ export class ReportsService {
     for (const user of users) {
       for (const type of leaveTypes) {
         const exists = await this.leaveBalanceModel.findOne({
-          userId: user._id,
-          organizationId: orgObjectId,
+          userId: user._id.toString(),
+          organizationId,
           year,
-          leaveTypeId: type._id,
+          leaveTypeId: type._id.toString(),
         });
         if (!exists) {
           try {
             await this.leaveBalanceModel.create({
-              userId: user._id,
-              organizationId: orgObjectId,
-              leaveTypeId: type._id,
+              userId: user._id.toString(),
+              organizationId,
+              leaveTypeId: type._id.toString(),
               year,
               totalAllocated: type.totalDaysAllowed,
               used: 0,
@@ -525,7 +525,7 @@ export class ReportsService {
 
     // Fetch all balances for the org/year in one query
     const allBalances = await this.leaveBalanceModel.find({
-      organizationId: orgObjectId,
+      organizationId,
       year,
     }).populate('leaveTypeId', 'name isPaid');
 
@@ -923,7 +923,7 @@ export class ReportsService {
     });
 
     const allBalances = await this.leaveBalanceModel.find({
-      organizationId: orgObjectId,
+      organizationId,
       year,
     });
 
@@ -1007,16 +1007,16 @@ export class ReportsService {
     for (const type of leaveTypes) {
       const exists = await this.leaveBalanceModel.findOne({
         userId,
-        organizationId: orgObjectId,
+        organizationId,
         year,
-        leaveTypeId: type._id,
+        leaveTypeId: type._id.toString(),
       });
       if (!exists) {
         try {
           await this.leaveBalanceModel.create({
             userId,
-            organizationId: orgObjectId,
-            leaveTypeId: type._id,
+            organizationId,
+            leaveTypeId: type._id.toString(),
             year,
             totalAllocated: type.totalDaysAllowed,
             used: 0,
@@ -1030,13 +1030,21 @@ export class ReportsService {
     }
 
     const balances = await this.leaveBalanceModel
-      .find({ userId, organizationId: orgObjectId, year })
+      .find({ userId, organizationId, year })
       .populate('leaveTypeId', 'name isPaid carryForwardAllowed carryForwardLimit');
+
+    // Improved date filtering to include leaves that span across year boundaries
+    const startDate = new Date(year, 0, 1);
+    const endDate = new Date(year, 11, 31);
 
     const allApps = await this.leaveAppModel.find({
       userId,
       organizationId: organizationId,
-      fromDate: { $gte: new Date(year, 0, 1), $lte: new Date(year, 11, 31) },
+      $or: [
+        { fromDate: { $gte: startDate, $lte: endDate } },
+        { toDate: { $gte: startDate, $lte: endDate } },
+        { fromDate: { $lte: startDate }, toDate: { $gte: endDate } }
+      ]
     }).populate('leaveTypeId', 'name');
 
     const approvedApps = allApps.filter((a) => ['approved', 'hr_approved'].includes(a.status));
@@ -1124,17 +1132,17 @@ export class ReportsService {
     for (const user of users) {
       for (const type of leaveTypes) {
         const exists = await this.leaveBalanceModel.findOne({
-          userId: user._id,
-          organizationId: orgObjectId,
+          userId: user._id.toString(),
+          organizationId,
           year,
-          leaveTypeId: type._id,
+          leaveTypeId: type._id.toString(),
         });
         if (!exists) {
           try {
             await this.leaveBalanceModel.create({
-              userId: user._id,
-              organizationId: orgObjectId,
-              leaveTypeId: type._id,
+              userId: user._id.toString(),
+              organizationId,
+              leaveTypeId: type._id.toString(),
               year,
               totalAllocated: type.totalDaysAllowed,
               used: 0,
@@ -1149,7 +1157,7 @@ export class ReportsService {
     }
 
     const allBalances = await this.leaveBalanceModel.find({
-      organizationId: orgObjectId,
+      organizationId,
       year,
     }).populate('leaveTypeId', 'name isPaid');
 
@@ -1374,18 +1382,18 @@ export class ReportsService {
     for (const member of teamMembers) {
       for (const type of leaveTypes) {
         const exists = await this.leaveBalanceModel.findOne({
-          userId: member._id,
-          organizationId: orgObjectId,
+          userId: member._id.toString(),
+          organizationId,
           year,
-          leaveTypeId: type._id,
+          leaveTypeId: type._id.toString(),
         });
 
         if (!exists) {
           try {
             await this.leaveBalanceModel.create({
-              userId: member._id,
-              organizationId: orgObjectId,
-              leaveTypeId: type._id,
+              userId: member._id.toString(),
+              organizationId,
+              leaveTypeId: type._id.toString(),
               year,
               totalAllocated: type.totalDaysAllowed,
               used: 0,
@@ -1423,17 +1431,28 @@ export class ReportsService {
         // Get leave balances for this member
         const balances = await this.leaveBalanceModel
           .find({
-            userId: member._id,  // Leave balances store userId as ObjectId
-            organizationId: orgObjectId,  // Leave balances store organizationId as ObjectId
+            userId: member._id.toString(),  // Leave balances store userId as string
+            organizationId,  // Leave balances store organizationId as string
             year,
           })
           .populate('leaveTypeId', 'name');
 
-        const totalAllocated = balances.reduce(
-          (sum, b) => sum + b.totalAllocated + (b.carryForward || 0),
-          0,
-        );
-        const totalRemaining = balances.reduce((sum, b) => sum + b.remaining, 0);
+        const calculatedBalances = balances.map((b) => {
+          const typeId = (b.leaveTypeId as any)?._id?.toString() || b.leaveTypeId?.toString();
+          const usedDays = approved
+            .filter((a) => (a.leaveTypeId as any)?._id?.toString() === typeId)
+            .reduce((sum, a) => sum + a.totalDays, 0);
+          const allocated = b.totalAllocated + (b.carryForward || 0);
+          return {
+            leaveType: b.leaveTypeId,
+            allocated: allocated,
+            used: usedDays,
+            remaining: allocated - usedDays,
+          };
+        });
+
+        const totalAllocated = calculatedBalances.reduce((sum, b) => sum + b.allocated, 0);
+        const totalRemaining = calculatedBalances.reduce((sum, b) => sum + b.remaining, 0);
 
         return {
           member: {
@@ -1449,12 +1468,7 @@ export class ReportsService {
           totalDaysTaken,
           totalAllocated,
           totalRemaining,
-          balances: balances.map((b) => ({
-            leaveType: b.leaveTypeId,
-            allocated: b.totalAllocated + (b.carryForward || 0),
-            used: b.used,
-            remaining: b.remaining,
-          })),
+          balances: calculatedBalances,
         };
       }),
     );
