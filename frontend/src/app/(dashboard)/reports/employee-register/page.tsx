@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { reportService, leaveTypeService, departmentService } from '@/lib/services';
 import { Select } from '@/components/ui/Select';
+import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, ClipboardList, Building2, Users } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Building2, Users, Download } from 'lucide-react';
 
 export default function EmployeeRegisterReport() {
   const [report, setReport] = useState<any>(null);
@@ -14,6 +15,7 @@ export default function EmployeeRegisterReport() {
   const [departmentId, setDepartmentId] = useState('');
   const [departments, setDepartments] = useState<any[]>([]);
   const [expandedEmployee, setExpandedEmployee] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   const years = Array.from({ length: 5 }, (_, i) => ({
     value: String(new Date().getFullYear() - i),
@@ -37,6 +39,17 @@ export default function EmployeeRegisterReport() {
       toast.error('Failed to load employee register');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      await reportService.exportEmployeeRegister({ year, departmentId: departmentId || undefined });
+    } catch {
+      toast.error('Failed to export CSV');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -86,6 +99,10 @@ export default function EmployeeRegisterReport() {
           <Select value={String(year)} onChange={(e) => setYear(Number(e.target.value))}
             options={years} className="w-28"
           />
+          <Button onClick={handleExport} isLoading={exporting} variant="outline" className="flex items-center gap-2">
+            <Download size={16} />
+            Export CSV
+          </Button>
         </div>
       </div>
 

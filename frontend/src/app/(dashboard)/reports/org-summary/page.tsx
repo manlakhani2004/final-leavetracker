@@ -3,15 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { reportService } from '@/lib/services';
 import { Select } from '@/components/ui/Select';
+import { Button } from '@/components/ui/Button';
 import { StatCard } from '@/components/ui/StatCard';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, BarChart3, TrendingUp, Users, FileText, CalendarDays, CheckCircle, Clock, Trophy, XCircle, Ban } from 'lucide-react';
+import { ArrowLeft, BarChart3, TrendingUp, Users, FileText, CalendarDays, CheckCircle, Clock, Trophy, XCircle, Ban, Download } from 'lucide-react';
 
 export default function OrgSummaryReport() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [exporting, setExporting] = useState(false);
 
   const years = Array.from({ length: 5 }, (_, i) => ({
     value: String(new Date().getFullYear() - i),
@@ -32,6 +34,17 @@ export default function OrgSummaryReport() {
       toast.error('Failed to load organization summary');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      await reportService.exportOrgSummary({ year });
+    } catch {
+      toast.error('Failed to export CSV');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -75,12 +88,18 @@ export default function OrgSummaryReport() {
             </p>
           </div>
         </div>
-        <Select
-          value={String(year)}
-          onChange={(e) => setYear(Number(e.target.value))}
-          options={years}
-          className="w-32"
-        />
+        <div className="flex items-center gap-3">
+          <Select
+            value={String(year)}
+            onChange={(e) => setYear(Number(e.target.value))}
+            options={years}
+            className="w-32"
+          />
+          <Button onClick={handleExport} isLoading={exporting} variant="outline" className="flex items-center gap-2">
+            <Download size={16} />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       {/* Key Metrics */}

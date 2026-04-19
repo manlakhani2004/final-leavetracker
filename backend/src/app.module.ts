@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './modules/auth/auth.module';
 import { OrganizationModule } from './modules/organization/organization.module';
 import { UserModule } from './modules/user/user.module';
@@ -14,6 +15,7 @@ import { ReportsModule } from './modules/reports/reports.module';
 import { MailModule } from './mail/mail.module';
 import { AiModule } from './modules/ai/ai.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { AuditLogModule } from './modules/audit-log/audit-log.module';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { NotificationModule } from './modules/notification/notification.module';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     OrganizationModule,
     UserModule,
@@ -40,6 +43,8 @@ import { NotificationModule } from './modules/notification/notification.module';
     MailModule,
     AiModule,
     NotificationModule,
+    AuditLogModule,
   ],
 })
 export class AppModule {}
+

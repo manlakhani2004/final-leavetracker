@@ -1,22 +1,38 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { leaveApplicationService, dashboardService } from '@/lib/services';
+import { leaveApplicationService, leaveTypeService, dashboardService } from '@/lib/services';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { StatCard } from '@/components/ui/StatCard';
+import { Modal } from '@/components/ui/Modal';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-import { CalendarDays, PlaneTakeoff, Target, Inbox } from 'lucide-react';
+import { CalendarDays, PlaneTakeoff, Target, Inbox, Pencil } from 'lucide-react';
 
 export default function LeavesPage() {
   const [leaves, setLeaves] = useState<any[]>([]);
   const [summary, setSummary] = useState<any>(null);
+  const [leaveTypes, setLeaveTypes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
+
+  // Edit modal state
+  const [editingLeave, setEditingLeave] = useState<any>(null);
+  const [editForm, setEditForm] = useState({
+    leaveTypeId: '',
+    fromDate: '',
+    toDate: '',
+    reason: '',
+  });
+  const [editLoading, setEditLoading] = useState(false);
+
+  useEffect(() => {
+    leaveTypeService.getLeaveTypes().then(setLeaveTypes).catch(() => {});
+  }, []);
 
   useEffect(() => {
     loadData();
@@ -46,20 +62,52 @@ export default function LeavesPage() {
     }
   };
 
-  const loadLeaves = async () => {
-    // Legacy function kept for compatibility if needed, but loadData handles both now
-    await loadData();
-  };
-
   const handleCancel = async (id: string) => {
     if (!confirm('Are you sure you want to cancel this leave application?')) return;
-
     try {
       await leaveApplicationService.cancelLeave(id);
       toast.success('Leave cancelled successfully!');
       loadData();
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to cancel leave');
+    }
+  };
+
+  const openEdit = (leave: any) => {
+    setEditingLeave(leave);
+    setEditForm({
+      leaveTypeId: leave.leaveTypeId?._id || leave.leaveTypeId || '',
+      fromDate: leave.fromDate ? new Date(leave.fromDate).toISOString().split('T')[0] : '',
+      toDate: leave.toDate ? new Date(leave.toDate).toISOString().split('T')[0] : '',
+      reason: leave.reason || '',
+    });
+  };
+
+  const handleEditSubmit = async () => {
+    if (!editingLeave) return;
+    if (!editForm.fromDate || !editForm.toDate) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    if (new Date(editForm.fromDate) > new Date(editForm.toDate)) {
+      toast.error('From date cannot be after to date');
+      return;
+    }
+    try {
+      setEditLoading(true);
+      await leaveApplicationService.updateLeave(editingLeave._id || editingLeave.id, {
+        leaveTypeId: editForm.leaveTypeId,
+        fromDate: editForm.fromDate,
+        toDate: editForm.toDate,
+        reason: editForm.reason,
+      });
+      toast.success('Leave application updated!');
+      setEditingLeave(null);
+      loadData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to update leave');
+    } finally {
+      setEditLoading(false);
     }
   };
 
@@ -141,11 +189,8 @@ export default function LeavesPage() {
                   </div>
                   <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--surface-secondary)' }}>
                     <div
-                      className={cn(
-                        "h-2 rounded-full transition-all",
-                        balance.remaining === 0 ? "bg-red-400" : ""
-                      )}
-                      style={{ 
+                      className={cn("h-2 rounded-full transition-all", balance.remaining === 0 ? "bg-red-400" : "")}
+                      style={{
                         width: `${Math.min(100, (balance.remaining / balance.allocated) * 100)}%`,
                         backgroundColor: balance.remaining === 0 ? '#f87171' : 'var(--primary)'
                       }}
@@ -198,27 +243,23 @@ export default function LeavesPage() {
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Duration</th>
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Days</th>
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Status</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Action</th>
+                    <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {leaves.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-12 text-center" style={{ color: 'var(--text-muted)' }}>
-                        <div className="flex justify-center mb-4 opacity-50">
-                          <Inbox size={48} />
-                        </div>
+                        <div className="flex justify-center mb-4 opacity-50"><Inbox size={48} /></div>
                         <p>No leave applications found</p>
                       </td>
                     </tr>
                   ) : (
                     leaves.map((leave) => (
-                      <tr 
-                        key={leave._id || leave.id} 
+                      <tr
+                        key={leave._id || leave.id}
                         className="transition-colors"
-                        style={{ 
-                          borderBottom: `1px solid var(--border)`,
-                        }}
+                        style={{ borderBottom: `1px solid var(--border)` }}
                         onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                       >
@@ -232,9 +273,9 @@ export default function LeavesPage() {
                           </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span 
+                          <span
                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border"
-                            style={{ 
+                            style={{
                               backgroundColor: 'var(--primary-light)',
                               color: 'var(--primary-text)',
                               borderColor: 'var(--primary-lighter)'
@@ -244,20 +285,28 @@ export default function LeavesPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge variant={getStatusBadgeVariant(leave.status)}>
-                            {leave.status}
-                          </Badge>
+                          <Badge variant={getStatusBadgeVariant(leave.status)}>{leave.status}</Badge>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
                           {leave.status === 'pending' && (
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              onClick={() => handleCancel(leave._id || leave.id)}
-                              className="shadow-sm hover:shadow-md h-8"
-                            >
-                              Cancel
-                            </Button>
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEdit(leave)}
+                                className="shadow-sm hover:shadow-md h-8 flex items-center gap-1"
+                              >
+                                <Pencil size={12} /> Edit
+                              </Button>
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() => handleCancel(leave._id || leave.id)}
+                                className="shadow-sm hover:shadow-md h-8"
+                              >
+                                Cancel
+                              </Button>
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -274,31 +323,100 @@ export default function LeavesPage() {
                   Showing <span className="font-bold">{leaves.length}</span> of {pagination.total} results
                 </p>
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                    disabled={pagination.page === 1}
-                    className="h-8 py-0"
-                  >
-                    Prev
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                    disabled={pagination.page * pagination.limit >= pagination.total}
-                    className="h-8 py-0"
-                  >
-                    Next
-                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))} disabled={pagination.page === 1} className="h-8 py-0">Prev</Button>
+                  <Button variant="outline" size="sm" onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))} disabled={pagination.page * pagination.limit >= pagination.total} className="h-8 py-0">Next</Button>
                 </div>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Edit Leave Modal */}
+      {editingLeave && (
+        <Modal
+          isOpen={!!editingLeave}
+          onClose={() => setEditingLeave(null)}
+          title="Edit Leave Application"
+          size="md"
+        >
+          <div className="space-y-5">
+            <div
+              className="rounded-xl p-4 text-sm"
+              style={{ background: 'var(--surface-secondary)', color: 'var(--text-muted)' }}
+            >
+              ⚠️ You can only edit <strong style={{ color: 'var(--text-primary)' }}>pending</strong> leave applications.
+              Changes will recalculate working days and re-validate your balance.
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Leave Type</label>
+              <Select
+                value={editForm.leaveTypeId}
+                onChange={(e) => setEditForm(f => ({ ...f, leaveTypeId: e.target.value }))}
+                options={leaveTypes.map(lt => ({ value: lt._id, label: lt.name }))}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>From Date</label>
+                <input
+                  type="date"
+                  value={editForm.fromDate}
+                  onChange={(e) => setEditForm(f => ({ ...f, fromDate: e.target.value }))}
+                  className="w-full rounded-xl border px-4 py-2.5 text-sm"
+                  style={{
+                    background: 'var(--surface-secondary)',
+                    borderColor: 'var(--border)',
+                    color: 'var(--text-primary)',
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>To Date</label>
+                <input
+                  type="date"
+                  value={editForm.toDate}
+                  min={editForm.fromDate}
+                  onChange={(e) => setEditForm(f => ({ ...f, toDate: e.target.value }))}
+                  className="w-full rounded-xl border px-4 py-2.5 text-sm"
+                  style={{
+                    background: 'var(--surface-secondary)',
+                    borderColor: 'var(--border)',
+                    color: 'var(--text-primary)',
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Reason</label>
+              <textarea
+                value={editForm.reason}
+                onChange={(e) => setEditForm(f => ({ ...f, reason: e.target.value }))}
+                rows={3}
+                placeholder="Reason for leave..."
+                className="w-full rounded-xl border px-4 py-2.5 text-sm resize-none"
+                style={{
+                  background: 'var(--surface-secondary)',
+                  borderColor: 'var(--border)',
+                  color: 'var(--text-primary)',
+                }}
+              />
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button variant="outline" onClick={() => setEditingLeave(null)} className="flex-1">
+                Cancel
+              </Button>
+              <Button onClick={handleEditSubmit} isLoading={editLoading} className="flex-1">
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
-
