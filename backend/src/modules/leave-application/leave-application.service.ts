@@ -17,7 +17,9 @@ import { Organization } from "../../schemas/organization.schema";
 import { Holiday } from "../../schemas/holiday.schema";
 import { Utils } from "../../common/utils";
 import { CreateLeaveApplicationDto } from "./dto/create-leave-application.dto";
+import { UpdateLeaveApplicationDto } from "./dto/update-leave-application.dto";
 import { NotificationService } from '../notification/notification.service';
+import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class LeaveApplicationService {
@@ -31,6 +33,7 @@ export class LeaveApplicationService {
     @InjectModel(Organization.name) private orgModel: Model<Organization>,
     @InjectModel(Holiday.name) private holidayModel: Model<Holiday>,
     private notificationService: NotificationService,
+    private mailService: MailService,
   ) {}
 
   async apply(
@@ -180,6 +183,25 @@ export class LeaveApplicationService {
         fromDate: fromDate.toISOString().split('T')[0],
         toDate: toDate.toISOString().split('T')[0],
       }).catch((err) => console.error('Notification error (apply):', err));
+
+      // Email manager about new leave application
+      if (applicantUser?.managerId) {
+        const manager = await this.userModel.findById(applicantUser.managerId);
+        if (manager?.email) {
+          const org = await this.orgModel.findById(organizationId);
+          this.mailService.sendLeaveApplied({
+            managerEmail: manager.email,
+            managerName: manager.name,
+            employeeName: applicantUser.name,
+            leaveTypeName: leaveType.name,
+            fromDate: fromDate.toISOString().split('T')[0],
+            toDate: toDate.toISOString().split('T')[0],
+            totalDays,
+            reason: createLeaveApplicationDto.reason || '',
+            organizationName: org?.name || 'Organization',
+          }).catch((err) => console.error('Email error (apply):', err));
+        }
+      }
 
       return leaveApplication[0];
     } catch (error) {
@@ -345,6 +367,23 @@ export class LeaveApplicationService {
       approverId: userId,
     }).catch((err) => console.error('Notification error (approve):', err));
 
+    // Email employee about approval
+    const applicant = await this.userModel.findById(application.userId);
+    if (applicant?.email) {
+      const org = await this.orgModel.findById(organizationId);
+      this.mailService.sendLeaveStatusUpdate({
+        employeeEmail: applicant.email,
+        employeeName: applicant.name,
+        status: 'approved',
+        leaveTypeName: approvedLeaveType?.name || 'Leave',
+        fromDate: application.fromDate.toISOString().split('T')[0],
+        toDate: application.toDate.toISOString().split('T')[0],
+        totalDays: application.totalDays,
+        reviewerName: approverUser?.name || 'Approver',
+        organizationName: org?.name || 'Organization',
+      }).catch((err) => console.error('Email error (approve):', err));
+    }
+
     return application;
   }
 
@@ -403,6 +442,24 @@ export class LeaveApplicationService {
       reason: rejectionReason,
     }).catch((err) => console.error('Notification error (reject):', err));
 
+    // Email employee about rejection
+    const rejectedApplicant = await this.userModel.findById(application.userId);
+    if (rejectedApplicant?.email) {
+      const org = await this.orgModel.findById(organizationId);
+      this.mailService.sendLeaveStatusUpdate({
+        employeeEmail: rejectedApplicant.email,
+        employeeName: rejectedApplicant.name,
+        status: 'rejected',
+        leaveTypeName: rejectedLeaveType?.name || 'Leave',
+        fromDate: application.fromDate.toISOString().split('T')[0],
+        toDate: application.toDate.toISOString().split('T')[0],
+        totalDays: application.totalDays,
+        reviewerName: rejectorUser?.name || 'Reviewer',
+        rejectionReason,
+        organizationName: org?.name || 'Organization',
+      }).catch((err) => console.error('Email error (reject):', err));
+    }
+
     return application;
   }
 
@@ -454,6 +511,118 @@ export class LeaveApplicationService {
       leaveTypeName: cancelledLeaveType?.name || 'Leave',
       totalDays: application.totalDays,
     }).catch((err) => console.error('Notification error (cancel):', err));
+
+    // Email manager about cancellation
+    if (cancellingUser?.managerId) {
+      const manager = await this.userModel.findById(cancellingUser.managerId);
+      if (manager?.email) {
+        const org = await this.orgModel.findById(organizationId);
+        this.mailService.sendLeaveCancelled({
+          managerEmail: manager.email,
+          managerName: manager.name,
+          employeeName: cancellingUser.name,
+          leaveTypeName: cancelledLeaveType?.name || 'Leave',
+          fromDate: application.fromDate.toISOString().split('T')[0],
+          toDate: application.toDate.toISOString().split('T')[0],
+          totalDays: application.totalDays,
+          organizationName: org?.name || 'Organization',
+        }).catch((err) => console.error('Email error (cancel):', err));
+      }
+    }
+
+    return application;
+  }
+
+  async update(
+    id: string,
+    userId: string,
+    organizationId: string,
+    dto: UpdateLeaveApplicationDto,
+  ) {
+    const application = await this.leaveAppModel.findOne({ _id: id, userId, organizationId });
+
+    if (!application) {
+      throw new NotFoundException('Leave application not found');
+    }
+    if (application.status !== 'pending') {
+      throw new BadRequestException('Only pending leave applications can be edited');
+    }
+
+    const fromDate = new Date(dto.fromDate || application.fromDate);
+    const toDate = new Date(dto.toDate || application.toDate);
+
+    if (fromDate > toDate) {
+      throw new BadRequestException('From date cannot be greater than to date');
+    }
+
+    // Recalculate working days
+    const organization = await this.orgModel.findById(organizationId);
+    const workingDays = organization?.settings?.workingDays || ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+    const holidays = await this.holidayModel.find({
+      organizationId,
+      date: { $gte: fromDate, $lte: toDate },
+    });
+    let totalDays = dto.halfDayType
+      ? 0.5
+      : Utils.getWorkingDaysBetweenDates(fromDate, toDate, workingDays, holidays.map((h) => h.date));
+
+    if (totalDays === 0) {
+      throw new BadRequestException('No working days in the selected period');
+    }
+
+    // Check for overlap (exclude current application)
+    const overlap = await this.leaveAppModel.findOne({
+      _id: { $ne: id },
+      userId,
+      organizationId,
+      status: { $in: ['pending', 'approved'] },
+      $or: [{ fromDate: { $lte: toDate }, toDate: { $gte: fromDate } }],
+    });
+    if (overlap) {
+      throw new BadRequestException('You already have a leave application for this period');
+    }
+
+    const leaveTypeId = dto.leaveTypeId || application.leaveTypeId.toString();
+    const leaveType = await this.leaveTypeModel.findById(leaveTypeId);
+    if (!leaveType) throw new NotFoundException('Leave type not found');
+
+    const year = fromDate.getFullYear();
+
+    // Restore old balance if the leave type or days changed
+    const oldLeaveTypeId = application.leaveTypeId.toString();
+    if (oldLeaveTypeId !== leaveTypeId.toString()) {
+      // Fully restore old type balance (old was pending so nothing was deducted yet)
+      // nothing to restore since pending apps don't deduct balance
+    }
+
+    // Check new balance is sufficient
+    let balance = await this.leaveBalanceModel.findOne({
+      userId, organizationId, leaveTypeId, year,
+    });
+    if (!balance) {
+      balance = await this.leaveBalanceModel.create({
+        userId, organizationId, leaveTypeId, year,
+        totalAllocated: leaveType.totalDaysAllowed,
+        used: 0,
+        carryForward: 0,
+        remaining: leaveType.totalDaysAllowed,
+      });
+    }
+
+    if (balance.remaining < totalDays) {
+      throw new BadRequestException(
+        `Insufficient leave balance. Available: ${balance.remaining}, Requested: ${totalDays}`,
+      );
+    }
+
+    // Apply updates
+    application.leaveTypeId = leaveTypeId as any;
+    application.fromDate = fromDate;
+    application.toDate = toDate;
+    application.totalDays = totalDays;
+    if (dto.reason) application.reason = dto.reason;
+    if (dto.halfDayType !== undefined) application.halfDayType = dto.halfDayType as any;
+    await application.save();
 
     return application;
   }

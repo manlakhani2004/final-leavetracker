@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Param, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { LeaveBalanceService } from './leave-balance.service';
+import { LeaveCarryOverService } from './leave-carry-over.service';
 import { AllocateLeaveDto } from './dto/allocate-leave.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -10,7 +11,10 @@ import { RequestUser } from '../auth/types';
 @Controller('leave-balances')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class LeaveBalanceController {
-  constructor(private leaveBalanceService: LeaveBalanceService) {}
+  constructor(
+    private leaveBalanceService: LeaveBalanceService,
+    private leaveCarryOverService: LeaveCarryOverService,
+  ) {}
 
   @Post('allocate')
   @Roles('org_admin', 'hr_manager')
@@ -51,5 +55,20 @@ export class LeaveBalanceController {
   ) {
     const result = await this.leaveBalanceService.carryForwardBalances(user.organizationId, fromYear, toYear);
     return new ApiResponseDto(true, result.message, {});
+  }
+
+  @Post('carry-forward/run')
+  @Roles('org_admin', 'hr_manager')
+  async runCarryForward(
+    @Query('fromYear', new ParseIntPipe({ optional: true })) fromYear: number,
+    @Query('toYear', new ParseIntPipe({ optional: true })) toYear: number,
+    @RequestUser() user: any,
+  ) {
+    const from = fromYear || new Date().getFullYear() - 1;
+    const to = toYear || new Date().getFullYear();
+    const result = await this.leaveCarryOverService.processCarryForward(
+      from, to, user.sub, user.name || 'Admin', user.role,
+    );
+    return new ApiResponseDto(true, `Carry-forward complete`, result);
   }
 }

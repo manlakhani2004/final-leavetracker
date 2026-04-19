@@ -9,6 +9,7 @@ import { User, UserSchema } from '../../schemas/user.schema';
 import { Organization, OrganizationSchema } from '../../schemas/organization.schema';
 import { Holiday, HolidaySchema } from '../../schemas/holiday.schema';
 import { NotificationModule } from '../notification/notification.module';
+import { MailModule } from '../../mail/mail.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { NotificationModule } from '../notification/notification.module';
       { name: Holiday.name, schema: HolidaySchema },
     ]),
     NotificationModule,
+    MailModule,
   ],
   controllers: [LeaveApplicationController],
   providers: [LeaveApplicationService],

@@ -2,14 +2,18 @@ import { Injectable, NotFoundException, ConflictException, BadRequestException }
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserRole } from '../../schemas/user.schema';
+import { Organization } from '../../schemas/organization.schema';
 import { Utils } from '../../common/utils';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Organization.name) private orgModel: Model<Organization>,
+    private mailService: MailService,
   ) {}
 
   async create(createUserDto: CreateUserDto, organizationId: string, requesterRole: UserRole) {
@@ -71,6 +75,25 @@ export class UserService {
     }
 
     const user = await this.userModel.create(userData);
+
+    // Send welcome credentials email (fire-and-forget)
+    this.orgModel.findById(organizationId).then((org) => {
+      const orgName = org?.name || 'Organization';
+      this.mailService
+        .sendUserCredentials(
+          createUserDto.email,
+          createUserDto.password,
+          createUserDto.name,
+          createUserDto.role,
+          orgName,
+        )
+        .catch((err) => {
+          console.error('User credential email failed:', err);
+        });
+    }).catch((err) => {
+      console.error('Failed to fetch organization for email:', err);
+    });
+
     return this.sanitizeUser(user);
   }
 
@@ -142,6 +165,26 @@ export class UserService {
     if ((updateData as any).password) {
       updateData.passwordHash = await Utils.hashPassword((updateData as any).password);
       delete updateData.password;
+    }
+
+    // Auto-assign department manager if role is employee and department is updated
+    const currentUser = await this.userModel.findById(id);
+    if (!currentUser) {
+      throw new NotFoundException('User not found');
+    }
+    const role = updateData.role || currentUser.role;
+
+    if (role === 'employee' && updateData.departmentId && updateData.departmentId !== currentUser.departmentId?.toString() && !updateData.managerId) {
+      const departmentManager = await this.userModel.findOne({
+        departmentId: new Types.ObjectId(updateData.departmentId as string),
+        role: 'manager',
+        organizationId: new Types.ObjectId(organizationId),
+        isActive: true
+      });
+      
+      if (departmentManager) {
+        updateData.managerId = departmentManager._id.toString();
+      }
     }
 
     updateData.$unset = {};

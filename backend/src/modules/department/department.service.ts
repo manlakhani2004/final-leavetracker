@@ -63,6 +63,9 @@ export class DepartmentService {
       const updateData: any = { ...updateDepartmentDto };
       if (updateDepartmentDto.headId) {
         updateData.headId = new Types.ObjectId(updateDepartmentDto.headId);
+      } else if (updateDepartmentDto.headId === '' || updateDepartmentDto.headId === null) {
+        updateData.$unset = { headId: 1 };
+        delete updateData.headId;
       }
 
       const department = await this.departmentModel.findOneAndUpdate(

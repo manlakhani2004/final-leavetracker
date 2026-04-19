@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, Res } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -214,5 +214,113 @@ export class ReportsController {
       query,
     );
     return new ApiResponseDto(true, 'Team calendar report fetched successfully', result);
+  }
+
+  // ─── CSV Export Endpoints ───────────────────────────────────────────────
+
+  @Get('export/my-history')
+  async exportMyHistory(
+    @RequestUser() user: any,
+    @Query() query: ReportQueryDto,
+    @Res() res: any,
+  ) {
+    const result = await this.reportsService.getMyHistoryReport(user.sub, user.organizationId, { ...query, limit: 10000 } as any);
+    const rows = result.applications || [];
+    const csv = [
+      ['Leave Type', 'From Date', 'To Date', 'Total Days', 'Status', 'Approver', 'Applied Date', 'Rejection Reason'],
+      ...rows.map((r: any) => [
+        r.leaveType?.name || '',
+        r.fromDate ? new Date(r.fromDate).toLocaleDateString() : '',
+        r.toDate ? new Date(r.toDate).toLocaleDateString() : '',
+        r.totalDays,
+        r.status,
+        r.approvedBy?.name || '',
+        r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '',
+        r.rejectionReason || '',
+      ]),
+    ].map(row => row.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=my-leave-history.csv');
+    res.send(csv);
+  }
+
+  @Get('export/org-summary')
+  @Roles('org_admin', 'hr_manager')
+  async exportOrgSummary(
+    @RequestUser() user: any,
+    @Query() query: ReportQueryDto,
+    @Res() res: any,
+  ) {
+    const result = await this.reportsService.getOrgSummaryReport(user.organizationId, query);
+    const rows = result.leaveTypeStats || [];
+    const csv = [
+      ['Leave Type', 'Total Applications', 'Total Days Taken'],
+      ...rows.map((r: any) => [r.name, r.count, r.days]),
+    ].map(row => row.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=org-leave-summary.csv');
+    res.send(csv);
+  }
+
+  @Get('export/team-summary')
+  @Roles('org_admin', 'hr_manager', 'manager')
+  async exportTeamSummary(
+    @RequestUser() user: any,
+    @Query() query: ReportQueryDto,
+    @Res() res: any,
+  ) {
+    const result = await this.reportsService.getTeamSummaryReport(user.sub, user.organizationId, user.role, query);
+    const rows = result.members || [];
+    const csv = [
+      ['Employee', 'Email', 'Department', 'Total Applications', 'Approved', 'Pending', 'Rejected', 'Days Taken'],
+      ...rows.map((r: any) => [r.name, r.email, r.department || '', r.totalApplications, r.approved, r.pending, r.rejected, r.totalDaysTaken]),
+    ].map(row => row.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=team-leave-summary.csv');
+    res.send(csv);
+  }
+
+  @Get('export/leave-balances')
+  @Roles('org_admin', 'hr_manager')
+  async exportLeaveBalances(
+    @RequestUser() user: any,
+    @Query() query: ReportQueryDto,
+    @Res() res: any,
+  ) {
+    const result = await this.reportsService.getLeaveBalanceSummaryReport(user.organizationId, query);
+    const rows = result.employees || [];
+    const csvRows: any[][] = [['Employee', 'Email', 'Department']];
+    const leaveTypes: any[] = result.leaveTypes || [];
+    leaveTypes.forEach((lt: any) => { csvRows[0].push(`${lt.name} - Allocated`, `${lt.name} - Used`, `${lt.name} - Remaining`); });
+    rows.forEach((r: any) => {
+      const row: any[] = [r.employee?.name || '', r.employee?.email || '', (r.employee?.department as any)?.name || ''];
+      leaveTypes.forEach((lt: any) => {
+        const bal = r.balances?.find((b: any) => (b.leaveType?._id?.toString() || b.leaveType?.toString()) === lt.id?.toString());
+        row.push(bal?.totalAllocated ?? 0, bal?.used ?? 0, bal?.remaining ?? 0);
+      });
+      csvRows.push(row);
+    });
+    const csv = csvRows.map(row => row.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=leave-balances.csv');
+    res.send(csv);
+  }
+
+  @Get('export/employee-register')
+  @Roles('org_admin', 'hr_manager')
+  async exportEmployeeRegister(
+    @RequestUser() user: any,
+    @Query() query: ReportQueryDto,
+    @Res() res: any,
+  ) {
+    const result = await this.reportsService.getEmployeeRegisterReport(user.organizationId, query);
+    const rows = result.employees || [];
+    const csv = [
+      ['Name', 'Email', 'Role', 'Department', 'Designation', 'Manager', 'Joining Date', 'Status'],
+      ...rows.map((r: any) => [r.name, r.email, r.role, r.department || '', r.designation || '', r.manager || '', r.joiningDate ? new Date(r.joiningDate).toLocaleDateString() : '', r.isActive ? 'Active' : 'Inactive']),
+    ].map(row => row.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=employee-register.csv');
+    res.send(csv);
   }
 }

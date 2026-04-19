@@ -20,6 +20,7 @@ import {
   BarChart3,
   ShieldAlert,
   Bell,
+  ScrollText,
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -42,6 +43,7 @@ const navigation: NavigationItem[] = [
   { name: 'Reports', href: '/reports', icon: BarChart3, roles: ['all'] },
   { name: 'Notifications', href: '/notifications', icon: Bell, roles: ['all'] },
   { name: 'AI Alerts', href: '/ai-alerts', icon: ShieldAlert, roles: ['org_admin', 'hr_manager'] },
+  { name: 'Audit Log', href: '/audit-log', icon: ScrollText, roles: ['org_admin', 'hr_manager'] },
   { name: 'Profile', href: '/profile', icon: UserCircle, roles: ['all'] },
   { name: 'Settings', href: '/settings', icon: Settings, roles: ['all'] },
 ];

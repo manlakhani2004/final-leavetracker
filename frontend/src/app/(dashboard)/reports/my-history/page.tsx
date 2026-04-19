@@ -8,7 +8,7 @@ import { Select } from '@/components/ui/Select';
 import { StatCard } from '@/components/ui/StatCard';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Calendar, FileText, CheckCircle, XCircle, Clock, Ban, BarChart3, Inbox } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, CheckCircle, XCircle, Clock, Ban, BarChart3, Inbox, Download } from 'lucide-react';
 
 export default function MyHistoryReport() {
   const [report, setReport] = useState<any>(null);
@@ -18,6 +18,7 @@ export default function MyHistoryReport() {
   const [leaveTypeFilter, setLeaveTypeFilter] = useState('');
   const [leaveTypes, setLeaveTypes] = useState<any[]>([]);
   const [page, setPage] = useState(1);
+  const [exporting, setExporting] = useState(false);
 
   const years = Array.from({ length: 5 }, (_, i) => ({
     value: String(new Date().getFullYear() - i),
@@ -52,6 +53,21 @@ export default function MyHistoryReport() {
       toast.error('Failed to load history report');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      await reportService.exportMyHistory({
+        year,
+        status: statusFilter || undefined,
+        leaveTypeId: leaveTypeFilter || undefined,
+      });
+    } catch {
+      toast.error('Failed to export CSV');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -109,6 +125,15 @@ export default function MyHistoryReport() {
           options={years}
           className="w-32"
         />
+        <Button
+          onClick={handleExport}
+          isLoading={exporting}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          <Download size={16} />
+          Export CSV
+        </Button>
       </div>
 
       {/* Stats Cards */}

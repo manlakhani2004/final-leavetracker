@@ -1,6 +1,16 @@
 import { api } from './api';
 import { User, Organization, LeaveType, LeaveBalance, LeaveApplication, Holiday } from '@/types';
 
+// Helper to trigger browser CSV download from a blob
+function triggerCsvDownload(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 interface ApiResponse<T> {
   success: boolean;
   message: string;
@@ -179,6 +189,17 @@ export const leaveApplicationService = {
     const response = await api.patch<ApiResponse<LeaveApplication>>(`/leave-applications/${id}/cancel`);
     return response.data.data;
   },
+
+  updateLeave: async (id: string, data: {
+    leaveTypeId?: string;
+    fromDate?: string;
+    toDate?: string;
+    reason?: string;
+    halfDayType?: string;
+  }) => {
+    const response = await api.patch<ApiResponse<LeaveApplication>>(`/leave-applications/${id}`, data);
+    return response.data.data;
+  },
 };
 
 export const holidayService = {
@@ -319,6 +340,32 @@ export const reportService = {
     const response = await api.get<ApiResponse<any>>('/reports/team-calendar', { params });
     return response.data.data;
   },
+
+  // ─── CSV Export helpers ───────────────────────────────────────────────────
+  exportMyHistory: async (params?: { year?: number; status?: string; leaveTypeId?: string }) => {
+    const response = await api.get('/reports/export/my-history', { params, responseType: 'blob' });
+    triggerCsvDownload(response.data, 'my-leave-history.csv');
+  },
+
+  exportOrgSummary: async (params?: { year?: number }) => {
+    const response = await api.get('/reports/export/org-summary', { params, responseType: 'blob' });
+    triggerCsvDownload(response.data, 'org-leave-summary.csv');
+  },
+
+  exportTeamSummary: async (params?: { year?: number }) => {
+    const response = await api.get('/reports/export/team-summary', { params, responseType: 'blob' });
+    triggerCsvDownload(response.data, 'team-leave-summary.csv');
+  },
+
+  exportLeaveBalances: async (params?: { year?: number; departmentId?: string }) => {
+    const response = await api.get('/reports/export/leave-balances', { params, responseType: 'blob' });
+    triggerCsvDownload(response.data, 'leave-balances.csv');
+  },
+
+  exportEmployeeRegister: async (params?: { year?: number; departmentId?: string }) => {
+    const response = await api.get('/reports/export/employee-register', { params, responseType: 'blob' });
+    triggerCsvDownload(response.data, 'employee-register.csv');
+  },
 };
 
 // ── Notification Service ──────────────────────────────────────────────────
@@ -429,5 +476,31 @@ export const aiService = {
       periodStart: string;
       periodEnd: string;
     };
+  },
+};
+
+// ── Audit Log Service ─────────────────────────────────────────────────────────
+export const auditLogService = {
+  getLogs: async (params?: {
+    action?: string;
+    entityType?: string;
+    actorId?: string;
+    page?: number;
+    limit?: number;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const response = await api.get<ApiResponse<any>>('/audit-logs', { params });
+    return response.data;
+  },
+
+  getStats: async () => {
+    const response = await api.get<ApiResponse<any>>('/audit-logs/stats');
+    return response.data.data;
+  },
+
+  getEntityHistory: async (entityType: string, entityId: string) => {
+    const response = await api.get<ApiResponse<any>>(`/audit-logs/${entityType}/${entityId}`);
+    return response.data.data;
   },
 };
