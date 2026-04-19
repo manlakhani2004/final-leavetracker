@@ -501,8 +501,8 @@ Please provide your recommendation in JSON format.`;
 
     // 1. Fetch all active employees in this org
     const employees = await this.userModel
-      .find({ organizationId: new Types.ObjectId(organizationId), isActive: true })
-      .select('_id name department')
+      .find({ organizationId: { $in: [organizationId, new Types.ObjectId(organizationId)] }, isActive: true })
+      .select('_id name department departmentId')
       .lean();
 
     if (!employees.length) {
@@ -513,7 +513,7 @@ Please provide your recommendation in JSON format.`;
     // 2. Fetch all approved leaves in the last 90 days for this org
     const allLeaves = await this.leaveAppModel
       .find({
-        organizationId: new Types.ObjectId(organizationId),
+        organizationId: { $in: [organizationId, new Types.ObjectId(organizationId)] },
         status: 'approved',
         fromDate: { $gte: periodStart },
       })
@@ -524,7 +524,7 @@ Please provide your recommendation in JSON format.`;
     // 3. Fetch holidays for bridge leave detection
     const holidays = await this.holidayModel
       .find({
-        organizationId: new Types.ObjectId(organizationId),
+        organizationId: { $in: [organizationId, new Types.ObjectId(organizationId)] },
         date: { $gte: periodStart, $lte: periodEnd },
       })
       .select('date')
@@ -534,22 +534,24 @@ Please provide your recommendation in JSON format.`;
     // 4. Fetch current year balances
     const year = now.getFullYear();
     const allBalances = await this.leaveBalanceModel
-      .find({ organizationId: new Types.ObjectId(organizationId), year })
+      .find({ organizationId: { $in: [organizationId, new Types.ObjectId(organizationId)] }, year })
       .select('userId totalAllocated remaining')
       .lean();
 
-    // Group leaves by userId
+    // Group leaves by userId (normalize to string for safe comparison)
     const leavesByUser = new Map<string, any[]>();
     for (const leave of allLeaves) {
-      const uid = leave.userId.toString();
+      const uid = leave.userId?.toString();
+      if (!uid) continue;
       if (!leavesByUser.has(uid)) leavesByUser.set(uid, []);
       leavesByUser.get(uid)!.push(leave);
     }
 
-    // Group balances by userId (aggregate across leave types)
+    // Group balances by userId (aggregate across leave types, normalize to string)
     const balanceByUser = new Map<string, { allocated: number; remaining: number }>();
     for (const b of allBalances) {
-      const uid = b.userId.toString();
+      const uid = b.userId?.toString();
+      if (!uid) continue;
       const existing = balanceByUser.get(uid) || { allocated: 0, remaining: 0 };
       existing.allocated += b.totalAllocated;
       existing.remaining += b.remaining;
@@ -573,6 +575,9 @@ Please provide your recommendation in JSON format.`;
 
       let score = 0;
       const flags: { label: string; value: string }[] = [];
+
+      // Log for debugging
+      this.logger.debug(`[AbsenteeismAI] Employee: ${emp.name} (${uid}), leaves in window: ${empLeaves.length}, totalDays: ${empLeaves.reduce((s, l) => s + (l.totalDays || 0), 0)}`);
 
       // ── Signal A: Monday/Friday pattern ──
       let monFriCount = 0;
@@ -649,7 +654,7 @@ Please provide your recommendation in JSON format.`;
         riskyEmployees.push({
           userId: uid,
           name: emp.name,
-          department: emp.department || 'Unassigned',
+          department: (emp as any).departmentId?.name || emp.department || 'Unassigned',
           riskScore: Math.min(score, 100),
           flags,
         });
@@ -706,8 +711,8 @@ Please provide your recommendation in JSON format.`;
         const emp = topRisks[i];
         const riskLevel = emp.riskScore >= 60 ? 'high' : emp.riskScore >= 30 ? 'medium' : 'low';
         alertsToSave.push({
-          organizationId: new Types.ObjectId(organizationId),
-          userId: new Types.ObjectId(emp.userId),
+          organizationId: organizationId,
+          userId: emp.userId,
           employeeName: emp.name,
           department: emp.department,
           riskLevel,
@@ -754,7 +759,7 @@ Please provide your recommendation in JSON format.`;
   ): Promise<any[]> {
     // Get the latest periodEnd for this org
     const latestAlert = await this.alertModel
-      .findOne({ organizationId: new Types.ObjectId(organizationId) })
+      .findOne({ organizationId: { $in: [organizationId, new Types.ObjectId(organizationId)] } })
       .sort({ periodEnd: -1 })
       .select('periodEnd')
       .lean();
@@ -762,7 +767,7 @@ Please provide your recommendation in JSON format.`;
     if (!latestAlert) return [];
 
     const query: any = {
-      organizationId: new Types.ObjectId(organizationId),
+      organizationId: { $in: [organizationId, new Types.ObjectId(organizationId)] },
       periodEnd: latestAlert.periodEnd,
     };
 

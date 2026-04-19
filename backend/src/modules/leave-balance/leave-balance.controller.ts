@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, UseGuards, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { LeaveBalanceService } from './leave-balance.service';
 import { LeaveCarryOverService } from './leave-carry-over.service';
 import { AllocateLeaveDto } from './dto/allocate-leave.dto';
@@ -29,9 +29,13 @@ export class LeaveBalanceController {
   @Get('me')
   async findMyBalances(
     @RequestUser() user: any,
-    @Query('year', new ParseIntPipe({ optional: true })) year?: number,
+    @Query('year') year?: string,
   ) {
-    const result = await this.leaveBalanceService.findMyBalances(user.sub, user.organizationId, year);
+    const yearNum = year ? parseInt(year, 10) : undefined;
+    if (year && isNaN(yearNum!)) {
+      return new ApiResponseDto(false, 'Year must be a valid number', null);
+    }
+    const result = await this.leaveBalanceService.findMyBalances(user.sub, user.organizationId, yearNum);
     return new ApiResponseDto(true, 'Leave balances fetched successfully', result);
   }
 
@@ -40,9 +44,13 @@ export class LeaveBalanceController {
   async findUserBalances(
     @Param('userId') userId: string,
     @RequestUser() user: any,
-    @Query('year', new ParseIntPipe({ optional: true })) year?: number,
+    @Query('year') year?: string,
   ) {
-    const result = await this.leaveBalanceService.findUserBalances(userId, user.organizationId, year);
+    const yearNum = year ? parseInt(year, 10) : undefined;
+    if (year && isNaN(yearNum!)) {
+      return new ApiResponseDto(false, 'Year must be a valid number', null);
+    }
+    const result = await this.leaveBalanceService.findUserBalances(userId, user.organizationId, yearNum);
     return new ApiResponseDto(true, 'User leave balances fetched successfully', result);
   }
 
@@ -60,12 +68,20 @@ export class LeaveBalanceController {
   @Post('carry-forward/run')
   @Roles('org_admin', 'hr_manager')
   async runCarryForward(
-    @Query('fromYear', new ParseIntPipe({ optional: true })) fromYear: number,
-    @Query('toYear', new ParseIntPipe({ optional: true })) toYear: number,
     @RequestUser() user: any,
+    @Query('fromYear') fromYear?: string,
+    @Query('toYear') toYear?: string,
   ) {
-    const from = fromYear || new Date().getFullYear() - 1;
-    const to = toYear || new Date().getFullYear();
+    const from = fromYear ? parseInt(fromYear, 10) : new Date().getFullYear() - 1;
+    const to = toYear ? parseInt(toYear, 10) : new Date().getFullYear();
+    
+    if (fromYear && isNaN(from)) {
+      return new ApiResponseDto(false, 'fromYear must be a valid number', null);
+    }
+    if (toYear && isNaN(to)) {
+      return new ApiResponseDto(false, 'toYear must be a valid number', null);
+    }
+    
     const result = await this.leaveCarryOverService.processCarryForward(
       from, to, user.sub, user.name || 'Admin', user.role,
     );

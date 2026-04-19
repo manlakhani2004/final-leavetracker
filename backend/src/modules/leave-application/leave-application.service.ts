@@ -114,17 +114,12 @@ export class LeaveApplicationService {
       }
 
       const year = fromDate.getFullYear();
-      console.log(year);
-      console.log(userId);
-      console.log(organizationId);
-      console.log(createLeaveApplicationDto.leaveTypeId);
       let balance = await this.leaveBalanceModel.findOne({
         userId,
         organizationId,
         leaveTypeId: createLeaveApplicationDto.leaveTypeId,
         year,
       });
-      console.log(balance);
       if (!balance) {
         // Lazy initialize the leave balance for the user if they've never applied for this type before
         try {
@@ -152,11 +147,29 @@ export class LeaveApplicationService {
         }
       }
 
-      if (!balance || balance.remaining < totalDays) {
+      // Also count pending (not-yet-approved) leaves so they can't over-book
+      const pendingDays = await this.leaveAppModel.aggregate([
+        {
+          $match: {
+            userId,
+            organizationId,
+            leaveTypeId: createLeaveApplicationDto.leaveTypeId,
+            status: 'pending',
+            fromDate: { $gte: new Date(`${year}-01-01`), $lte: new Date(`${year}-12-31`) },
+          },
+        },
+        { $group: { _id: null, total: { $sum: '$totalDays' } } },
+      ]);
+      const reservedByPending = pendingDays[0]?.total || 0;
+      const effectiveRemaining = (balance?.remaining || 0) - reservedByPending;
+
+      if (!balance || effectiveRemaining < totalDays) {
         throw new BadRequestException(
-          `Insufficient leave balance. Available: ${balance?.remaining || 0}, Requested: ${totalDays}`,
+          `Insufficient leave balance. Available: ${effectiveRemaining} (${balance?.remaining || 0} remaining minus ${reservedByPending} pending), Requested: ${totalDays}`,
         );
       }
+
+
 
       // Create leave application
       const leaveApplication = await this.leaveAppModel.create([
@@ -331,14 +344,32 @@ export class LeaveApplicationService {
       }
     }
 
-    // Deduct leave balance
+    // Deduct leave balance — atomic check: only deduct if remaining >= totalDays
     const year = application.fromDate.getFullYear();
+    const leaveBalance = await this.leaveBalanceModel.findOne({
+      userId: application.userId,
+      organizationId,
+      leaveTypeId: application.leaveTypeId,
+      year,
+    });
+
+    if (!leaveBalance) {
+      throw new BadRequestException('Leave balance record not found for this employee');
+    }
+
+    if (leaveBalance.remaining < application.totalDays) {
+      throw new BadRequestException(
+        `Insufficient leave balance. Employee only has ${leaveBalance.remaining} day(s) remaining, but this application requires ${application.totalDays} day(s). Another leave may have already been approved.`,
+      );
+    }
+
     await this.leaveBalanceModel.findOneAndUpdate(
       {
         userId: application.userId,
         organizationId,
         leaveTypeId: application.leaveTypeId,
         year,
+        remaining: { $gte: application.totalDays }, // atomic safety guard
       },
       {
         $inc: {
@@ -347,6 +378,7 @@ export class LeaveApplicationService {
         },
       },
     );
+
 
     // Update application status
     application.status = "approved";

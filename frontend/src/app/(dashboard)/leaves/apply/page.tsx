@@ -38,10 +38,10 @@ export default function ApplyLeavePage() {
   useEffect(() => {
     if (formData.fromDate && formData.toDate) {
       if (formData.duration === 'half_day') {
-         setTotalDays(0.5);
-         if (formData.toDate !== formData.fromDate) {
-           setFormData(f => ({ ...f, toDate: f.fromDate }));
-         }
+        setTotalDays(0.5);
+        if (formData.toDate !== formData.fromDate) {
+          setFormData(f => ({ ...f, toDate: f.fromDate }));
+        }
       } else {
         const from = new Date(formData.fromDate);
         const to = new Date(formData.toDate);
@@ -116,7 +116,7 @@ export default function ApplyLeavePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.leaveTypeId) {
       toast.error('Please select a leave type');
       return;
@@ -135,7 +135,7 @@ export default function ApplyLeavePage() {
       } else {
         delete payload.halfDayType;
       }
-      
+
       delete payload.duration;
 
       await leaveApplicationService.applyLeave(payload);
@@ -168,7 +168,7 @@ export default function ApplyLeavePage() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Apply for Leave</h1>
-      
+
       <div className="flex flex-col lg:flex-row gap-6">
         {/* ── Left: Application Form ── */}
         <div className="flex-1 max-w-2xl modern-card rounded-lg p-6">
@@ -178,9 +178,9 @@ export default function ApplyLeavePage() {
               name="leaveTypeId"
               value={formData.leaveTypeId}
               onChange={handleChange}
-              options={leaveTypes.map(type => ({ 
-                value: (type as any)._id || type.id, 
-                label: `${type.name} (${type.totalDaysAllowed} days)` 
+              options={leaveTypes.map(type => ({
+                value: (type as any)._id || type.id,
+                label: `${type.name} (${type.totalDaysAllowed} days)`
               }))}
             />
 
@@ -230,18 +230,18 @@ export default function ApplyLeavePage() {
             </div>
 
             {totalDays > 0 && (
-              <div className="rounded-lg overflow-hidden" style={{ 
-                backgroundColor: 'var(--surface-secondary)', 
+              <div className="rounded-lg overflow-hidden" style={{
+                backgroundColor: 'var(--surface-secondary)',
                 borderColor: 'var(--border-light)',
                 borderWidth: '1px',
                 borderStyle: 'solid'
               }}>
-                 <div className="px-4 py-3 bg-indigo-50 border-b border-indigo-100 dark:bg-indigo-900/20 dark:border-indigo-800/30">
-                   <p className="text-sm font-semibold flex justify-between items-center" style={{ color: 'var(--text-primary)' }}>
-                     <span>Total {formData.duration === 'half_day' ? 'Half ' : ''}Day(s)</span>
-                     <span className="text-lg text-indigo-600 dark:text-indigo-400">{totalDays} Day(s)</span>
-                   </p>
-                 </div>
+                <div className="px-4 py-3 bg-indigo-50 border-b border-indigo-100 dark:bg-indigo-900/20 dark:border-indigo-800/30">
+                  <p className="text-sm font-semibold flex justify-between items-center" style={{ color: 'var(--text-primary)' }}>
+                    <span>Total {formData.duration === 'half_day' ? 'Half ' : ''}Day(s)</span>
+                    <span className="text-lg text-indigo-600 dark:text-indigo-400">{totalDays} Day(s)</span>
+                  </p>
+                </div>
               </div>
             )}
 

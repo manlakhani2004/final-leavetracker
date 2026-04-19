@@ -127,14 +127,17 @@ export const leaveTypeService = {
 
 export const leaveBalanceService = {
   getMyBalances: async (year?: number) => {
-    const response = await api.get<ApiResponse<LeaveBalance[]>>('/leave-balances/me', { params: { year } });
+    const params = year ? { year } : {};
+    const response = await api.get<ApiResponse<LeaveBalance[]>>('/leave-balances/me', { params });
     return response.data.data;
   },
 
   getUserBalances: async (userId: string, year?: number) => {
-    const response = await api.get<ApiResponse<LeaveBalance[]>>(`/leave-balances/user/${userId}`, { params: { year } });
+    const params = year ? { year } : {};
+    const response = await api.get<ApiResponse<LeaveBalance[]>>(`/leave-balances/user/${userId}`, { params });
     return response.data.data;
   },
+
 
   allocateBalance: async (data: any) => {
     const response = await api.post<ApiResponse<LeaveBalance>>('/leave-balances/allocate', data);
